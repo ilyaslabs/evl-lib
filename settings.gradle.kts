@@ -7,4 +7,7 @@ include(
     "evl-processor",
     "evl-processor-ksp",
     "evl-cli",
+    "evl-gradle-plugin",
+    "evl-maven-plugin",
+    "evl-bom",
 )

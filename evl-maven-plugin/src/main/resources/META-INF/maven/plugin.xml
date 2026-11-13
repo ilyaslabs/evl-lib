@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand-maintained Maven plugin descriptor. Keep in sync with the Mojo classes. -->
+<plugin>
+  <name>EVL Maven Plugin</name>
+  <description>Validate and package EVL architecture and workflow documentation.</description>
+  <groupId>io.github.ilyaslabs</groupId>
+  <artifactId>evl-maven-plugin</artifactId>
+  <version>@pluginVersion@</version>
+  <goalPrefix>evl</goalPrefix>
+  <isolatedRealm>false</isolatedRealm>
+  <inheritedByDefault>true</inheritedByDefault>
+  <requiredJavaVersion>17</requiredJavaVersion>
+  <requiredMavenVersion>3.6.3</requiredMavenVersion>
+  <mojos>
+    <mojo>
+      <goal>package</goal>
+      <description>Writes META-INF/evl/manifest.json and documents into the build output.</description>
+      <requiresProject>true</requiresProject>
+      <phase>process-classes</phase>
+      <implementation>io.github.ilyaslabs.evl.maven.PackageMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>true</threadSafe>
+      <parameters>
+        <parameter>
+          <name>basedir</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project base directory.</description>
+        </parameter>
+        <parameter>
+          <name>outputDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build output directory.</description>
+        </parameter>
+        <parameter>
+          <name>buildDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>skip</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Skip EVL goals.</description>
+        </parameter>
+        <parameter>
+          <name>groupId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Group id.</description>
+        </parameter>
+        <parameter>
+          <name>artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Artifact id.</description>
+        </parameter>
+        <parameter>
+          <name>version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Version.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <basedir implementation="java.io.File" default-value="${basedir}"/>
+        <outputDirectory implementation="java.io.File" default-value="${project.build.outputDirectory}"/>
+        <buildDirectory implementation="java.io.File" default-value="${project.build.directory}"/>
+        <skip implementation="boolean" default-value="false">${evl.skip}</skip>
+        <groupId implementation="java.lang.String" default-value="${project.groupId}"/>
+        <artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <version implementation="java.lang.String" default-value="${project.version}"/>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>validate</goal>
+      <description>Validates EVL documentation against the compiled classpath.</description>
+      <requiresDependencyResolution>compile</requiresDependencyResolution>
+      <requiresProject>true</requiresProject>
+      <phase>verify</phase>
+      <implementation>io.github.ilyaslabs.evl.maven.ValidateMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>true</threadSafe>
+      <parameters>
+        <parameter>
+          <name>basedir</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project base directory.</description>
+        </parameter>
+        <parameter>
+          <name>outputDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build output directory.</description>
+        </parameter>
+        <parameter>
+          <name>buildDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>skip</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Skip EVL goals.</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Compile classpath.</description>
+        </parameter>
+        <parameter>
+          <name>failOnWarning</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Fail on warnings.</description>
+        </parameter>
+        <parameter>
+          <name>failOnError</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Fail on errors.</description>
+        </parameter>
+        <parameter>
+          <name>format</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Report format: text or sarif.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <basedir implementation="java.io.File" default-value="${basedir}"/>
+        <outputDirectory implementation="java.io.File" default-value="${project.build.outputDirectory}"/>
+        <buildDirectory implementation="java.io.File" default-value="${project.build.directory}"/>
+        <skip implementation="boolean" default-value="false">${evl.skip}</skip>
+        <classpathElements implementation="java.util.List" default-value="${project.compileClasspathElements}"/>
+        <failOnWarning implementation="boolean" default-value="false">${evl.failOnWarning}</failOnWarning>
+        <failOnError implementation="boolean" default-value="true">${evl.failOnError}</failOnError>
+        <format implementation="java.lang.String" default-value="text">${evl.format}</format>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>index</goal>
+      <description>Writes target/evl/evl-index.json for AI agents.</description>
+      <requiresDependencyResolution>compile</requiresDependencyResolution>
+      <requiresProject>true</requiresProject>
+      <implementation>io.github.ilyaslabs.evl.maven.IndexMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>true</threadSafe>
+      <parameters>
+        <parameter>
+          <name>basedir</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project base directory.</description>
+        </parameter>
+        <parameter>
+          <name>outputDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build output directory.</description>
+        </parameter>
+        <parameter>
+          <name>buildDirectory</name>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>skip</name>
+          <type>boolean</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Skip EVL goals.</description>
+        </parameter>
+        <parameter>
+          <name>classpathElements</name>
+          <type>java.util.List</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Compile classpath.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <basedir implementation="java.io.File" default-value="${basedir}"/>
+        <outputDirectory implementation="java.io.File" default-value="${project.build.outputDirectory}"/>
+        <buildDirectory implementation="java.io.File" default-value="${project.build.directory}"/>
+        <skip implementation="boolean" default-value="false">${evl.skip}</skip>
+        <classpathElements implementation="java.util.List" default-value="${project.compileClasspathElements}"/>
+      </configuration>
+    </mojo>
+  </mojos>
+</plugin>
