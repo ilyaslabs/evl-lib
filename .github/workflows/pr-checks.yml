@@ -1,0 +1,10 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  call-pr-checks:
+    uses: ilyaslabs/cicd/.github/workflows/gradle-pr-checks.yml@main
