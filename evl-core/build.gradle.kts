@@ -8,7 +8,7 @@ dependencies {
     implementation("org.snakeyaml:snakeyaml-engine:2.10")
     testImplementation("org.snakeyaml:snakeyaml-engine:2.10")
     testImplementation("com.networknt:json-schema-validator:1.5.8")
-    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2")
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.23.0")
 }
 
 // Regenerates spec/schema/*.json and spec/rules.yaml from the spec tables (Kind, StepType, Rule).
