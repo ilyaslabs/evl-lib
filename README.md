@@ -1,39 +1,18 @@
-# EVL™ — Engineering Visualization Language
+# EVL: flow maps from your code
 
-EVL documents a codebase's architecture, flows, APIs, data and decisions next to the code, as `@EVL.*` annotations and `.evl.yaml` files, and validates them against the code.
+EVL 2.0 turns `@Flow("image-upload>s3")` tags in Java or Kotlin code into hand-drawn, drill-down flow maps. Nothing else is needed: no YAML, no framework detection.
 
-| Module | Java | Purpose |
-|---|---|---|
-| `evl-annotations` | 8+ | `@EVL.*` annotations (CLASS retention, no runtime dependency) |
-| `evl-processor` | 8+ | Annotation processor writing `META-INF/evl/index.json` |
-| `evl-processor-ksp` | 8+ | Same for Kotlin via KSP |
-| `evl-core` | 17+ | Parse, merge, resolve, validate, query, export |
-| `evl-cli` | 17+ | `evl validate`, `inspect`, `list`, `graph`, `index`, `fmt`, `init`, `schema`, `compat`, `rules` |
-| `evl-gradle-plugin` | 17+ | Plugin `io.github.ilyaslabs.evl`: `evlValidate` (on `check`), `evlIndex`, `evlPackage` |
-| `evl-maven-plugin` | 17+ | `evl:validate`, `evl:index`, `evl:package` |
-| `evl-bom` | | Aligned versions |
+| Module | What it is |
+| --- | --- |
+| `evl-annotations` | `@Flow` and the `@EVL.*` symbol annotations. Java 8+, no dependencies. |
+| `evl-core` | The scanner: reads `@Flow`, `// @flow` markers and `@EVL.*` into a flow tree with call order and resource use. |
+| `evl-cli` | `evl <dir>` prints the tree; `--json` prints the model. |
+| `evl-bom` | Aligns the versions. |
 
-The specification lives in [`spec/`](spec/README.md). Example projects are in [`examples/`](examples/).
+Read the [guide](docs/index.md) and the [media example](examples/media). The IntelliJ plugin draws the maps.
 
-## Quick start (Gradle)
+## Snapshots
 
-```kotlin
-plugins { id("io.github.ilyaslabs.evl") version "1.0.0" }
-```
+Every push to a branch other than `main` publishes `<branch>-SNAPSHOT` builds to the Maven Central snapshot repository. Releases come only from `v*` tags.
 
-Then add `evl.yaml` at the project root (`evl init`) and run `./gradlew check`.
-
-## CLI
-
-```
-java -jar evl-cli-1.0.0-all.jar validate .
-java -jar evl-cli-1.0.0-all.jar index --out build/evl/index.json
-```
-
-## Build
-
-`./gradlew build` runs all tests, including the conformance suite in `spec/conformance/`. Regenerate schemas and `rules.yaml` with `./gradlew :evl-core:generateSpec`.
-
-## License
-
-Apache License 2.0. "EVL" is a trademark, see [TRADEMARKS.md](TRADEMARKS.md).
+EVL 1.0 (YAML documents) is deprecated; 1.0.0 stays on Maven Central.

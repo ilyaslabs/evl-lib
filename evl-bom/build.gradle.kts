@@ -9,7 +9,7 @@ description = "EVL bill of materials: aligns the versions of all EVL artifacts."
 
 dependencies {
     constraints {
-        listOf("evl-annotations", "evl-processor", "evl-processor-ksp", "evl-core", "evl-cli", "evl-maven-plugin")
+        listOf("evl-annotations", "evl-core", "evl-cli")
             .forEach { api(project(":$it")) }
     }
 }

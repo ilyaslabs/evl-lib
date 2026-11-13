@@ -24,7 +24,7 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p site/javadoc
-          cp -r docs spec examples README.md CHANGELOG.md site/
+          cp -r docs examples README.md CHANGELOG.md site/
           sed -e "s#(\.\./#(#g" -e "s#(\([a-z-]*\.md\))#(docs/\1)#g" docs/index.md > site/index.md
           # Example projects are source trees with no page to render: link them to GitHub instead.
           sed -i "s#(\.\./examples/#(https://github.com/ilyaslabs/evl-lib/tree/main/examples/#g" site/docs/*.md

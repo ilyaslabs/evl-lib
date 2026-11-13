@@ -1,9 +1,12 @@
 # Changelog
 
-## 1.0.0 (2026-11-13)
+## 2.0.0 (unreleased)
 
-- Specification 1.0: language, annotations, documents, workflows, evidence, compatibility, agent interface; JSON Schemas and `rules.yaml` generated from `evl-core`; conformance suite with one file per rule.
-- `evl-annotations`, `evl-processor` (Java), `evl-processor-ksp` (Kotlin).
-- `evl-core`: parse, merge, resolve, validate, incremental update, queries, ranked search, JSON/DOT/Mermaid export.
-- `evl-cli`: validate, inspect, list, graph, index, fmt, package, init, schema, compat, rules; text, JSON and SARIF output.
-- Gradle plugin `io.github.ilyaslabs.evl` and `evl-maven-plugin`; `evl-bom`.
+- New model: `@Flow("a>b>c")` paths on classes and methods, plus `// @flow a>b: Label` markers inside methods.
+- `@EVL.*` annotations only pick the symbol: Endpoint, Job, Database, Storage, Queue, Cache, External, Interface, Service, Actor.
+- Step order comes from the call graph; `after` marks asynchronous steps.
+- Removed: `.evl.yaml` documents, the annotation processors, and the Gradle and Maven plugins.
+
+## 1.0.0
+
+- First release (YAML documents). Deprecated.
