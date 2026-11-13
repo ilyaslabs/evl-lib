@@ -6,8 +6,8 @@ description = "EVL Maven plugin: evl:package, evl:validate and evl:index goals."
 
 dependencies {
     implementation(project(":evl-cli"))
-    compileOnly("org.apache.maven:maven-plugin-api:3.9.11")
-    testImplementation("org.apache.maven:maven-plugin-api:3.9.11")
+    compileOnly("org.apache.maven:maven-plugin-api:3.10.0")
+    testImplementation("org.apache.maven:maven-plugin-api:3.10.0")
 }
 
 mavenPublishing {
