@@ -1,0 +1,29 @@
+# Conformance cases for EVL-E068. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E068
+cases:
+  - name: "unknown input"
+    expect: present
+    files:
+      a.evl.yaml: |
+        flows:
+          - { id: g, name: G, category: TECHNICAL, inputs: [ { name: sku } ] }
+      flow.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: s, name: S, type: CALL_FLOW, flow: g, inputs: { qty: 1 } }
+  - name: "declared input"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        flows:
+          - { id: g, name: G, category: TECHNICAL, inputs: [ { name: sku } ] }
+      flow.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: s, name: S, type: CALL_FLOW, flow: g, inputs: { sku: x } }

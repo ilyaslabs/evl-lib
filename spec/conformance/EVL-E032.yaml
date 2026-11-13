@@ -1,0 +1,21 @@
+# Conformance cases for EVL-E032. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E032
+cases:
+  - name: "same library twice"
+    expect: present
+    libraries:
+      "payments-sdk":
+        a.evl.yaml: |
+          modules:
+            - { id: p, name: P }
+      "payments-sdk#2":
+        a.evl.yaml: |
+          modules:
+            - { id: q, name: Q }
+  - name: "one copy"
+    expect: absent
+    libraries:
+      "payments-sdk":
+        a.evl.yaml: |
+          modules:
+            - { id: p, name: P }

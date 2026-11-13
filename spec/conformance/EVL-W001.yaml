@@ -1,0 +1,16 @@
+# Conformance cases for EVL-W001. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-W001
+cases:
+  - name: "annotations without a manifest"
+    expect: present
+    manifest: null
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: m, name: M }
+  - name: "with manifest"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: m, name: M }

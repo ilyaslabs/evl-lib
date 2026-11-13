@@ -1,0 +1,305 @@
+# EVL 1.0 validation rules.
+# Generated from io.github.ilyaslabs.evl.core.spec.Rule; run ./gradlew generateSpec after changing it.
+# Examples for each rule live in spec/conformance/<code>.yaml.
+evl: "1.0"
+rules:
+  - code: EVL-E001
+    level: ERROR
+    title: "Invalid manifest"
+    description: "evl.yaml is missing required fields (evl, id, name) or has invalid values."
+    configurable: false
+    conformance: conformance/EVL-E001.yaml
+  - code: EVL-E002
+    level: ERROR
+    title: "Overlapping manifests"
+    description: "More than one evl.yaml claims the same source root."
+    configurable: false
+    conformance: conformance/EVL-E002.yaml
+  - code: EVL-E010
+    level: ERROR
+    title: "Duplicate id"
+    description: "Two declarations use the same id (an annotation plus a YAML element with the same id merge instead)."
+    configurable: true
+    conformance: conformance/EVL-E010.yaml
+  - code: EVL-E011
+    level: ERROR
+    title: "Malformed id"
+    description: "Ids are dotted lowercase segments: [a-z][a-z0-9-]* separated by dots, at most 128 characters."
+    configurable: true
+    conformance: conformance/EVL-E011.yaml
+  - code: EVL-E012
+    level: ERROR
+    title: "Missing id"
+    description: "Elements declared in documents must have an id."
+    configurable: true
+    conformance: conformance/EVL-E012.yaml
+  - code: EVL-E020
+    level: ERROR
+    title: "Conflicting source"
+    description: "An annotation and a YAML element with the same id point at different source locations."
+    configurable: true
+    conformance: conformance/EVL-E020.yaml
+  - code: EVL-E021
+    level: ERROR
+    title: "Reference kind mismatch"
+    description: "The kind prefix of a reference does not match the target element's kind."
+    configurable: true
+    conformance: conformance/EVL-E021.yaml
+  - code: EVL-E022
+    level: ERROR
+    title: "Library not found"
+    description: "A reference names an EVL library (app-id:) that is not on the classpath."
+    configurable: true
+    conformance: conformance/EVL-E022.yaml
+  - code: EVL-E023
+    level: ERROR
+    title: "Wrong reference target"
+    description: "The attribute does not allow references to elements of this kind."
+    configurable: true
+    conformance: conformance/EVL-E023.yaml
+  - code: EVL-E024
+    level: ERROR
+    title: "Library element override"
+    description: "A consuming application cannot redeclare an element of a library."
+    configurable: true
+    conformance: conformance/EVL-E024.yaml
+  - code: EVL-E025
+    level: ERROR
+    title: "Unresolved reference"
+    description: "The referenced element does not exist."
+    configurable: true
+    conformance: conformance/EVL-E025.yaml
+  - code: EVL-E030
+    level: ERROR
+    title: "Unresolved source reference"
+    description: "The source reference does not resolve to code."
+    configurable: true
+    conformance: conformance/EVL-E030.yaml
+  - code: EVL-E031
+    level: ERROR
+    title: "Ambiguous source reference"
+    description: "The source reference matches several members; add parameter types."
+    configurable: true
+    conformance: conformance/EVL-E031.yaml
+  - code: EVL-E032
+    level: ERROR
+    title: "Duplicate library"
+    description: "Two libraries with the same EVL id are on the classpath."
+    configurable: true
+    conformance: conformance/EVL-E032.yaml
+  - code: EVL-E033
+    level: ERROR
+    title: "Malformed source reference"
+    description: "The source reference does not follow the syntax type[#member[(params)]]."
+    configurable: true
+    conformance: conformance/EVL-E033.yaml
+  - code: EVL-E050
+    level: ERROR
+    title: "Major version mismatch"
+    description: "A document declares a different major spec version than the manifest."
+    configurable: true
+    conformance: conformance/EVL-E050.yaml
+  - code: EVL-E052
+    level: ERROR
+    title: "Unsupported spec version"
+    description: "The manifest declares a major spec version this tool does not support."
+    configurable: true
+    conformance: conformance/EVL-E052.yaml
+  - code: EVL-E060
+    level: ERROR
+    title: "Unknown step type"
+    description: "The step type is not one of the official step types."
+    configurable: true
+    conformance: conformance/EVL-E060.yaml
+  - code: EVL-E061
+    level: ERROR
+    title: "Duplicate step id"
+    description: "Step ids must be unique within their flow."
+    configurable: true
+    conformance: conformance/EVL-E061.yaml
+  - code: EVL-E062
+    level: ERROR
+    title: "Unknown goto target"
+    description: "A GOTO step targets a step id that does not exist in the same flow."
+    configurable: true
+    conformance: conformance/EVL-E062.yaml
+  - code: EVL-E063
+    level: ERROR
+    title: "Decision needs two branches"
+    description: "A DECISION step needs at least two branches (counting otherwise)."
+    configurable: true
+    conformance: conformance/EVL-E063.yaml
+  - code: EVL-E064
+    level: ERROR
+    title: "Parallel needs two branches"
+    description: "A PARALLEL step needs at least two branches."
+    configurable: true
+    conformance: conformance/EVL-E064.yaml
+  - code: EVL-E065
+    level: ERROR
+    title: "Call target is not a flow"
+    description: "A CALL_FLOW step must reference a flow."
+    configurable: true
+    conformance: conformance/EVL-E065.yaml
+  - code: EVL-E066
+    level: ERROR
+    title: "Field not allowed for step type"
+    description: "The step declares a field that its type does not accept."
+    configurable: true
+    conformance: conformance/EVL-E066.yaml
+  - code: EVL-E067
+    level: ERROR
+    title: "Missing step field"
+    description: "The step type requires a field that is missing (e.g. flow for CALL_FLOW, target for GOTO)."
+    configurable: true
+    conformance: conformance/EVL-E067.yaml
+  - code: EVL-E068
+    level: ERROR
+    title: "Unknown flow input"
+    description: "A CALL_FLOW input name is not declared by the called flow."
+    configurable: true
+    conformance: conformance/EVL-E068.yaml
+  - code: EVL-E070
+    level: ERROR
+    title: "Sensitive default value"
+    description: "A sensitive config property must not declare a default value."
+    configurable: true
+    conformance: conformance/EVL-E070.yaml
+  - code: EVL-E071
+    level: ERROR
+    title: "Possible secret"
+    description: "Text looks like a secret (private key, access key, password or high-entropy token)."
+    configurable: true
+    conformance: conformance/EVL-E071.yaml
+  - code: EVL-E100
+    level: ERROR
+    title: "YAML tag not allowed"
+    description: "Custom YAML tags are not allowed in EVL documents."
+    configurable: false
+    conformance: conformance/EVL-E100.yaml
+  - code: EVL-E101
+    level: ERROR
+    title: "Duplicate YAML key"
+    description: "A mapping declares the same key twice."
+    configurable: false
+    conformance: conformance/EVL-E101.yaml
+  - code: EVL-E102
+    level: ERROR
+    title: "Unknown field"
+    description: "The field is not defined for this element kind (use an x- prefix for extensions)."
+    configurable: false
+    conformance: conformance/EVL-E102.yaml
+  - code: EVL-E103
+    level: ERROR
+    title: "Wrong value type"
+    description: "The value does not have the type the schema requires."
+    configurable: false
+    conformance: conformance/EVL-E103.yaml
+  - code: EVL-E104
+    level: ERROR
+    title: "YAML syntax error"
+    description: "The document is not valid YAML."
+    configurable: false
+    conformance: conformance/EVL-E104.yaml
+  - code: EVL-E105
+    level: ERROR
+    title: "Document too large"
+    description: "The document exceeds a size, depth or alias limit."
+    configurable: true
+    conformance: conformance/EVL-E105.yaml
+  - code: EVL-E106
+    level: ERROR
+    title: "Missing required field"
+    description: "A required field is missing."
+    configurable: true
+    conformance: conformance/EVL-E106.yaml
+  - code: EVL-E107
+    level: ERROR
+    title: "Invalid enum value"
+    description: "The value is not one of the allowed values."
+    configurable: true
+    conformance: conformance/EVL-E107.yaml
+  - code: EVL-W001
+    level: WARNING
+    title: "Missing manifest"
+    description: "No evl.yaml was found; an application id was derived."
+    configurable: true
+    conformance: conformance/EVL-W001.yaml
+  - code: EVL-W002
+    level: WEAK_WARNING
+    title: "Derived id"
+    description: "The annotation has no explicit id; the derived id changes when the class is renamed."
+    configurable: true
+    conformance: conformance/EVL-W002.yaml
+  - code: EVL-W021
+    level: WARNING
+    title: "Recursive flow"
+    description: "A flow calls itself directly or indirectly."
+    configurable: true
+    conformance: conformance/EVL-W021.yaml
+  - code: EVL-W051
+    level: WARNING
+    title: "Newer minor version"
+    description: "The document uses a newer minor spec version than this tool supports."
+    configurable: true
+    conformance: conformance/EVL-W051.yaml
+  - code: EVL-W060
+    level: WEAK_WARNING
+    title: "Step order from annotations"
+    description: "Steps declared only by @EVL.Step are ordered by source position, which is not guaranteed across files."
+    configurable: true
+    conformance: conformance/EVL-W060.yaml
+  - code: EVL-W061
+    level: WEAK_WARNING
+    title: "Default category"
+    description: "The flow has no category; APPLICATION is assumed."
+    configurable: true
+    conformance: conformance/EVL-W061.yaml
+  - code: EVL-W066
+    level: WARNING
+    title: "Unreachable steps"
+    description: "Steps after FAIL, END or an unconditional GOTO never run."
+    configurable: true
+    conformance: conformance/EVL-W066.yaml
+  - code: EVL-W067
+    level: WARNING
+    title: "Unconditional loop"
+    description: "A GOTO jumps backwards without a when condition."
+    configurable: true
+    conformance: conformance/EVL-W067.yaml
+  - code: EVL-W071
+    level: WARNING
+    title: "Orphan doc"
+    description: "@EVL.Doc is not attached to any EVL element."
+    configurable: true
+    conformance: conformance/EVL-W071.yaml
+  - code: EVL-W080
+    level: WARNING
+    title: "Outside module packages"
+    description: "The element's source is outside the packages of its module."
+    configurable: true
+    conformance: conformance/EVL-W080.yaml
+  - code: EVL-I020
+    level: INFO
+    title: "Overridden by YAML"
+    description: "Fields of an annotation are overridden by a YAML declaration."
+    configurable: true
+    conformance: conformance/EVL-I020.yaml
+  - code: EVL-I030
+    level: INFO
+    title: "Unrealized business step"
+    description: "A BUSINESS flow step has neither realizedBy nor source."
+    configurable: true
+    conformance: conformance/EVL-I030.yaml
+  - code: EVL-I040
+    level: INFO
+    title: "Dependency not seen in code"
+    description: "No code reference supports this declared dependency (it may be indirect)."
+    configurable: true
+    conformance: conformance/EVL-I040.yaml
+  - code: EVL-I041
+    level: INFO
+    title: "Source not checked"
+    description: "The source reference could not be checked (no compiled classes or sources available)."
+    configurable: true
+    conformance: conformance/EVL-I041.yaml

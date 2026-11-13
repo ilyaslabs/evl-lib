@@ -1,0 +1,29 @@
+# Conformance cases for EVL-E002. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E002
+cases:
+  - name: "nested manifest claims the same source root"
+    expect: present
+    manifest: |
+      evl: "1.0"
+      id: shop
+      name: Shop
+      sources: ["src/main/java"]
+    files:
+      sub/evl.yaml: |
+        evl: "1.0"
+        id: sub
+        name: Sub
+        sources: ["../src/main/java"]
+  - name: "nested manifest with its own sources"
+    expect: absent
+    manifest: |
+      evl: "1.0"
+      id: shop
+      name: Shop
+      sources: ["src/main/java"]
+    files:
+      sub/evl.yaml: |
+        evl: "1.0"
+        id: sub
+        name: Sub
+        sources: ["src"]

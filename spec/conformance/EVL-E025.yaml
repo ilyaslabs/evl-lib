@@ -1,0 +1,17 @@
+# Conformance cases for EVL-E025. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E025
+cases:
+  - name: "unknown target"
+    expect: present
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C, module: nowhere }
+  - name: "known target"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: m, name: M }
+        components:
+          - { id: c, name: C, module: m }

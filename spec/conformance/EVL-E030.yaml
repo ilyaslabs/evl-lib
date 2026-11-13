@@ -1,0 +1,17 @@
+# Conformance cases for EVL-E030. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E030
+cases:
+  - name: "source does not resolve"
+    expect: present
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C, source: { ref: a.Missing } }
+    resolver: {"unresolved": ["a.Missing"]}
+  - name: "source resolves"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C, source: { ref: a.Here } }
+    resolver: {}

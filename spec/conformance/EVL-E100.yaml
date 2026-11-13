@@ -1,0 +1,13 @@
+# Conformance cases for EVL-E100. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E100
+cases:
+  - name: "custom tag"
+    expect: present
+    files:
+      a.evl.yaml: |
+        modules: !include other.yaml
+  - name: "plain YAML"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        modules: []

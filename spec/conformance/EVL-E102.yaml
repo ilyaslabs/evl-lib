@@ -1,0 +1,15 @@
+# Conformance cases for EVL-E102. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E102
+cases:
+  - name: "unknown field"
+    expect: present
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: a, name: A, colour: red }
+  - name: "extension field"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: a, name: A, x-colour: red }

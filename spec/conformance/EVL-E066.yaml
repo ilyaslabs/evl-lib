@@ -1,0 +1,23 @@
+# Conformance cases for EVL-E066. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E066
+cases:
+  - name: "question on an action"
+    expect: present
+    files:
+      a.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: s, name: S, type: ACTION, question: why }
+  - name: "question on a decision"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: d, name: D, type: DECISION, question: why, branches: [ { when: a, steps: [] }, { when: b, steps: [] } ] }

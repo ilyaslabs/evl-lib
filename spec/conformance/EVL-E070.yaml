@@ -1,0 +1,15 @@
+# Conformance cases for EVL-E070. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E070
+cases:
+  - name: "sensitive with default"
+    expect: present
+    files:
+      a.evl.yaml: |
+        configProperties:
+          - { id: config.db.password, key: db.password, sensitive: true, defaultValue: x }
+  - name: "sensitive without default"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        configProperties:
+          - { id: config.db.password, key: db.password, sensitive: true }

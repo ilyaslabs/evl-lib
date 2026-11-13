@@ -1,0 +1,18 @@
+# Conformance cases for EVL-E023. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E023
+cases:
+  - name: "module field references a component"
+    expect: present
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: a, name: A }
+          - { id: b, name: B, module: a }
+  - name: "module field references a module"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        modules:
+          - { id: a, name: A }
+        components:
+          - { id: b, name: B, module: a }

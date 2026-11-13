@@ -1,0 +1,2780 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ilyaslabs.github.io/evl-lib/schema/1.0/evl-document.schema.json",
+  "title": "EVL document (*.evl.yaml)",
+  "description": "Generated from the evl-core spec tables. Do not edit by hand; run ./gradlew generateSpec.",
+  "type": "object",
+  "properties": {
+    "evl": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Spec version, e.g. \"1.0\"."
+    },
+    "modules": {
+      "type": "array",
+      "description": "Module declarations.",
+      "items": {
+        "$ref": "#/$defs/module"
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "Component declarations.",
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Dependency declarations.",
+      "items": {
+        "$ref": "#/$defs/dependency"
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "description": "Interface declarations.",
+      "items": {
+        "$ref": "#/$defs/interface"
+      }
+    },
+    "implementations": {
+      "type": "array",
+      "description": "Implementation declarations.",
+      "items": {
+        "$ref": "#/$defs/implementation"
+      }
+    },
+    "endpoints": {
+      "type": "array",
+      "description": "Endpoint declarations.",
+      "items": {
+        "$ref": "#/$defs/endpoint"
+      }
+    },
+    "requests": {
+      "type": "array",
+      "description": "Request declarations.",
+      "items": {
+        "$ref": "#/$defs/request"
+      }
+    },
+    "responses": {
+      "type": "array",
+      "description": "Response declarations.",
+      "items": {
+        "$ref": "#/$defs/response"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Error response declarations.",
+      "items": {
+        "$ref": "#/$defs/error"
+      }
+    },
+    "dataModels": {
+      "type": "array",
+      "description": "Data model declarations.",
+      "items": {
+        "$ref": "#/$defs/data-model"
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "description": "Repository declarations.",
+      "items": {
+        "$ref": "#/$defs/repository"
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "Event declarations.",
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "externalSystems": {
+      "type": "array",
+      "description": "External system declarations.",
+      "items": {
+        "$ref": "#/$defs/external-system"
+      }
+    },
+    "caches": {
+      "type": "array",
+      "description": "Cache declarations.",
+      "items": {
+        "$ref": "#/$defs/cache"
+      }
+    },
+    "infrastructure": {
+      "type": "array",
+      "description": "Infrastructure declarations.",
+      "items": {
+        "$ref": "#/$defs/infrastructure"
+      }
+    },
+    "configurations": {
+      "type": "array",
+      "description": "Configuration declarations.",
+      "items": {
+        "$ref": "#/$defs/configuration"
+      }
+    },
+    "configProperties": {
+      "type": "array",
+      "description": "Config property declarations.",
+      "items": {
+        "$ref": "#/$defs/config-property"
+      }
+    },
+    "flows": {
+      "type": "array",
+      "description": "Flow declarations.",
+      "items": {
+        "$ref": "#/$defs/flow"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Decision declarations.",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "description": "Requirement declarations.",
+      "items": {
+        "$ref": "#/$defs/requirement"
+      }
+    },
+    "actors": {
+      "type": "array",
+      "description": "Actor declarations.",
+      "items": {
+        "$ref": "#/$defs/actor"
+      }
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "module": {
+      "type": "object",
+      "title": "Module",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Business domain."
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What the module is responsible for."
+        },
+        "owner": {
+          "type": "string",
+          "description": "Owning team or person."
+        },
+        "parent": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "module"
+          ],
+          "description": "Parent module."
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Java package globs the module covers, e.g. com.example.order.**"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "title": "Component",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "module": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "module"
+          ],
+          "description": "Owning module."
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What the component is responsible for."
+        },
+        "layer": {
+          "type": "string",
+          "enum": [
+            "PRESENTATION",
+            "APPLICATION",
+            "DOMAIN",
+            "INFRASTRUCTURE",
+            "INTEGRATION",
+            "CUSTOM"
+          ],
+          "description": "Architectural layer."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "dependency": {
+      "type": "object",
+      "title": "Dependency",
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "from": {
+          "$ref": "#/$defs/ref",
+          "description": "Depending element."
+        },
+        "to": {
+          "$ref": "#/$defs/ref",
+          "description": "Element depended on."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "DIRECT",
+            "API",
+            "EVENT",
+            "DATABASE",
+            "CACHE",
+            "EXTERNAL",
+            "ASYNC",
+            "CONFIG",
+            "CUSTOM"
+          ],
+          "description": "Dependency type."
+        },
+        "customType": {
+          "type": "string",
+          "description": "Type name when type is CUSTOM."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why the dependency exists."
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "OUTBOUND",
+            "INBOUND",
+            "BIDIRECTIONAL"
+          ],
+          "description": "Direction relative to from."
+        },
+        "optional": {
+          "type": "boolean",
+          "description": "Whether the dependency is optional."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "interface": {
+      "type": "object",
+      "title": "Interface",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "module": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "module"
+          ],
+          "description": "Owning module."
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Contract responsibilities."
+        },
+        "stability": {
+          "type": "string",
+          "enum": [
+            "STABLE",
+            "EVOLVING",
+            "EXPERIMENTAL",
+            "DEPRECATED"
+          ],
+          "description": "Contract stability."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "implementation": {
+      "type": "object",
+      "title": "Implementation",
+      "required": [
+        "id",
+        "of"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "of": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "interface"
+          ],
+          "description": "Implemented interface."
+        },
+        "variant": {
+          "type": "string",
+          "description": "Variant name, e.g. Stripe."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "title": "Endpoint",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "protocol": {
+          "type": "string",
+          "enum": [
+            "HTTP",
+            "GRPC",
+            "GRAPHQL",
+            "WEBSOCKET",
+            "MESSAGING",
+            "RMI",
+            "CLI",
+            "CUSTOM"
+          ],
+          "description": "Protocol."
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method or operation verb."
+        },
+        "path": {
+          "type": "string",
+          "description": "Path or operation name."
+        },
+        "request": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "data-model",
+            "request"
+          ],
+          "description": "Request contract."
+        },
+        "response": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "data-model",
+            "response"
+          ],
+          "description": "Response contract."
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "error"
+          ],
+          "description": "Error responses."
+        },
+        "auth": {
+          "type": "string",
+          "description": "Authentication requirements."
+        },
+        "flow": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "flow"
+          ],
+          "description": "Related flow."
+        },
+        "component": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "component"
+          ],
+          "description": "Owning component."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "request": {
+      "type": "object",
+      "title": "Request",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "endpoint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "endpoint"
+          ],
+          "description": "Endpoints using this request."
+        },
+        "validation": {
+          "type": "string",
+          "description": "Validation rules."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Documented fields."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "title": "Response",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "endpoint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "endpoint"
+          ],
+          "description": "Endpoints returning this response."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Documented fields."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "title": "Error response",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "code": {
+          "type": "string",
+          "description": "Error code, e.g. 409 or NOT_FOUND."
+        },
+        "condition": {
+          "type": "string",
+          "description": "When the error happens."
+        },
+        "retryable": {
+          "type": "boolean",
+          "description": "Whether the caller may retry."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "data-model": {
+      "type": "object",
+      "title": "Data model",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "module": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "module"
+          ],
+          "description": "Owning module."
+        },
+        "owner": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "component",
+            "module"
+          ],
+          "description": "Owning module or component."
+        },
+        "storage": {
+          "type": "string",
+          "description": "Storage location."
+        },
+        "lifecycle": {
+          "type": [
+            "string",
+            "object"
+          ],
+          "description": "Lifecycle description or state machine."
+        },
+        "retention": {
+          "type": "string",
+          "description": "Retention policy."
+        },
+        "pii": {
+          "type": "boolean",
+          "description": "Holds personally identifiable information."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Documented fields."
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Relationships to other data models."
+        },
+        "indexes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Important indexes."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "repository": {
+      "type": "object",
+      "title": "Repository",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "data-model"
+          ],
+          "description": "Data models persisted."
+        },
+        "storage": {
+          "type": "string",
+          "description": "Storage location."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "title": "Event",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "channel": {
+          "type": "string",
+          "description": "Topic or queue name."
+        },
+        "delivery": {
+          "type": "string",
+          "enum": [
+            "AT_MOST_ONCE",
+            "AT_LEAST_ONCE",
+            "EXACTLY_ONCE"
+          ],
+          "description": "Delivery guarantee."
+        },
+        "ordering": {
+          "type": "string",
+          "description": "Ordering expectations."
+        },
+        "schema": {
+          "type": "string",
+          "description": "Payload schema."
+        },
+        "broker": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "external-system",
+            "infrastructure"
+          ],
+          "description": "Broker."
+        },
+        "producers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "description": "Producing elements."
+        },
+        "consumers": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Consumers: ref, retry, onFailure, idempotent, flow."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "external-system": {
+      "type": "object",
+      "title": "External system",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "systemType": {
+          "type": "string",
+          "enum": [
+            "API",
+            "DATABASE",
+            "BROKER",
+            "STORAGE",
+            "SEARCH",
+            "IDENTITY",
+            "PAYMENT",
+            "EMAIL",
+            "CUSTOM"
+          ],
+          "description": "System type."
+        },
+        "url": {
+          "type": "string",
+          "description": "Documentation URL (never credentials)."
+        },
+        "owner": {
+          "type": "string",
+          "description": "Owner."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "cache": {
+      "type": "object",
+      "title": "Cache",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "store": {
+          "type": "string",
+          "description": "Cache store."
+        },
+        "ttl": {
+          "type": "string",
+          "description": "Time to live."
+        },
+        "key": {
+          "type": "string",
+          "description": "Key structure."
+        },
+        "invalidation": {
+          "type": "string",
+          "description": "Invalidation strategy."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "infrastructure": {
+      "type": "object",
+      "title": "Infrastructure",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Resource type, e.g. S3 bucket."
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Environments."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Configuration",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Property prefix."
+        },
+        "component": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "component"
+          ],
+          "description": "Owning component."
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Config properties in this group."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "config-property": {
+      "type": "object",
+      "title": "Config property",
+      "required": [
+        "id",
+        "key"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "key": {
+          "type": "string",
+          "description": "Property key."
+        },
+        "defaultValue": {
+          "type": "string",
+          "description": "Default value (never for sensitive properties)."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the property is required."
+        },
+        "sensitive": {
+          "type": "boolean",
+          "description": "Whether the value is a secret."
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Environments."
+        },
+        "affects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "description": "Affected elements."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "flow": {
+      "type": "object",
+      "title": "Flow",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "BUSINESS",
+            "APPLICATION",
+            "INTEGRATION",
+            "BACKGROUND",
+            "SCHEDULED",
+            "TECHNICAL",
+            "CUSTOM"
+          ],
+          "description": "Workflow category."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Business domain."
+        },
+        "module": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "module"
+          ],
+          "description": "Owning module."
+        },
+        "actors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "actor"
+          ],
+          "description": "Actors."
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What starts the flow."
+        },
+        "entryPoint": {
+          "$ref": "#/$defs/source",
+          "description": "Entry point in code."
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Preconditions."
+        },
+        "postconditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Postconditions."
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Inputs: name, type, description, required."
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Outputs: name, type, description."
+        },
+        "context": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Context values: name, description."
+        },
+        "implementedBy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "flow"
+          ],
+          "description": "Technical flows implementing this flow."
+        },
+        "steps": {
+          "$ref": "#/$defs/steps",
+          "description": "Step sequence."
+        },
+        "onError": {
+          "$ref": "#/$defs/steps",
+          "description": "Flow-level error handling steps."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "title": "Decision",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PROPOSED",
+            "ACCEPTED",
+            "SUPERSEDED",
+            "DEPRECATED"
+          ],
+          "description": "Decision status."
+        },
+        "context": {
+          "type": "string",
+          "description": "Context."
+        },
+        "decision": {
+          "type": "string",
+          "description": "The decision."
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Reasoning."
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Alternatives considered."
+        },
+        "consequences": {
+          "type": "string",
+          "description": "Consequences and tradeoffs."
+        },
+        "supersedes": {
+          "$ref": "#/$defs/ref",
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Superseded decision."
+        },
+        "date": {
+          "type": "string",
+          "description": "ISO date."
+        },
+        "relates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "description": "Related elements."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "requirement": {
+      "type": "object",
+      "title": "Requirement",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "BUSINESS",
+            "FUNCTIONAL",
+            "NON_FUNCTIONAL",
+            "SECURITY",
+            "COMPLIANCE"
+          ],
+          "description": "Requirement kind."
+        },
+        "statement": {
+          "type": "string",
+          "description": "Requirement statement."
+        },
+        "ticket": {
+          "type": "string",
+          "description": "Ticket URL or text."
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "MUST",
+            "SHOULD",
+            "COULD"
+          ],
+          "description": "Priority."
+        },
+        "relates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "description": "Related elements."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "actor": {
+      "type": "object",
+      "title": "Actor",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown description."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags."
+        },
+        "doc": {
+          "type": "string",
+          "description": "Longer Markdown documentation."
+        },
+        "see": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Links (URLs or evl: references)."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "requirement"
+          ],
+          "description": "Related requirements."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          },
+          "x-evl-ref-kinds": [
+            "decision"
+          ],
+          "description": "Related decisions."
+        },
+        "source": {
+          "$ref": "#/$defs/source",
+          "description": "Where the element lives in code."
+        },
+        "concurrency": {
+          "type": "string",
+          "description": "Concurrency considerations."
+        },
+        "performance": {
+          "type": "string",
+          "description": "Performance considerations."
+        },
+        "security": {
+          "type": "string",
+          "description": "Security considerations."
+        },
+        "failure": {
+          "type": "string",
+          "description": "Failure scenarios."
+        },
+        "actorType": {
+          "type": "string",
+          "enum": [
+            "HUMAN",
+            "SYSTEM",
+            "SCHEDULER"
+          ],
+          "description": "Actor type."
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "step": {
+      "type": "object",
+      "title": "Step",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ACTION",
+            "DECISION",
+            "PARALLEL",
+            "CALL_FLOW",
+            "EVENT",
+            "WAIT",
+            "RETRY",
+            "COMPENSATE",
+            "FAIL",
+            "END",
+            "GOTO",
+            "NOTE"
+          ],
+          "default": "ACTION"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "for": {
+          "type": [
+            "string",
+            "array"
+          ]
+        },
+        "timeout": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "component": {
+          "$ref": "#/$defs/ref"
+        },
+        "flow": {
+          "$ref": "#/$defs/ref"
+        },
+        "event": {
+          "$ref": "#/$defs/ref"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "PUBLISH",
+            "CONSUME"
+          ]
+        },
+        "join": {
+          "type": "string",
+          "enum": [
+            "ALL",
+            "ANY",
+            "NONE"
+          ]
+        },
+        "async": {
+          "type": "boolean"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "outputs": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "maxAttempts": {
+              "type": "integer"
+            },
+            "backoff": {
+              "type": "string"
+            },
+            "retryOn": {
+              "type": "array"
+            }
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "realizedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "concurrency": {
+          "type": "string"
+        },
+        "performance": {
+          "type": "string"
+        },
+        "security": {
+          "type": "string"
+        },
+        "failure": {
+          "type": "string"
+        },
+        "steps": {
+          "$ref": "#/$defs/steps"
+        },
+        "otherwise": {
+          "$ref": "#/$defs/steps"
+        },
+        "onTimeout": {
+          "$ref": "#/$defs/steps"
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "when": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "steps": {
+                "$ref": "#/$defs/steps"
+              }
+            }
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "on"
+            ],
+            "properties": {
+              "on": {
+                "type": "string"
+              },
+              "then": {
+                "$ref": "#/$defs/steps"
+              }
+            }
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "source": {
+      "description": "Source reference: type[#member[(params)]], package:, config: or file:.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "ref"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+    },
+    "ref": {
+      "type": "string",
+      "description": "Element reference: [app-id:][kind:]id[/local]."
+    }
+  }
+}

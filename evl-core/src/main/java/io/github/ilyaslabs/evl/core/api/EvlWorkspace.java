@@ -389,21 +389,73 @@ public final class EvlWorkspace {
             Path mf = base.resolve("evl.yaml");
             List<String> globs = Manifest.DEFAULT_DOCUMENTS;
             List<String> excludes = List.of();
+            List<String> sources = List.of();
             if (Files.isRegularFile(mf)) {
                 manifest(mf);
                 ManifestParser.Result r = ManifestParser.parse(manifestFile, manifestContent);
                 if (r.manifest().isPresent()) {
                     globs = r.manifest().get().documents();
                     excludes = r.manifest().get().exclude();
+                    sources = r.manifest().get().sources();
                 }
             } else {
                 manifestFile = name(mf);
                 derivedAppId(deriveId(base.getFileName() == null ? "app" : base.getFileName().toString()));
             }
+            // EVL-LNG-001: documents belong to the nearest manifest; nested applications are skipped.
+            List<Path> nested = nestedManifests(base);
             for (Path p : findDocuments(base, globs, excludes)) {
-                addDocument(p);
+                if (nested.stream().noneMatch(n -> p.startsWith(n.getParent()))) {
+                    addDocument(p);
+                }
             }
+            overlaps(base, sources, nested);
             return this;
+        }
+
+        /** EVL-E002: a nested manifest that claims one of this manifest's source roots. */
+        private void overlaps(Path base, List<String> sources, List<Path> nested) {
+            for (Path n : nested) {
+                try {
+                    ManifestParser.Result r = ManifestParser.parse(name(n), Files.readString(n));
+                    if (r.manifest().isEmpty()) {
+                        continue;
+                    }
+                    for (String s : r.manifest().get().sources()) {
+                        Path claimed = n.getParent().resolve(s).normalize();
+                        for (String mine : sources) {
+                            if (base.resolve(mine).normalize().equals(claimed)) {
+                                diagnostics.add(Diagnostics.of(Rule.E002, "Source root " + base.relativize(claimed)
+                                    + " is claimed by evl.yaml and by " + name(n), Location.of(name(n))));
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    // unreadable nested manifest: ignore
+                }
+            }
+        }
+
+        private static List<Path> nestedManifests(Path base) {
+            List<Path> out = new ArrayList<>();
+            try {
+                Files.walkFileTree(base, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) {
+                        if (!d.equals(base) && IGNORED_DIRS.contains(d.getFileName().toString())) {
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        if (!d.equals(base) && Files.isRegularFile(d.resolve("evl.yaml"))) {
+                            out.add(d.resolve("evl.yaml"));
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return out;
         }
 
         public EvlWorkspace build() {

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ilyaslabs.github.io/evl-lib/schema/1.0/evl-diagnostics.schema.json",
+  "title": "EVL diagnostics (evl validate --format json)",
+  "description": "Generated from the evl-core spec tables. Do not edit by hand; run ./gradlew generateSpec.",
+  "type": "object",
+  "required": [
+    "evl",
+    "format",
+    "diagnostics"
+  ],
+  "properties": {
+    "evl": {
+      "type": "string"
+    },
+    "format": {
+      "const": 1
+    },
+    "application": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "level",
+          "message",
+          "location"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^EVL-[EWI]\\d{3}$"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "WEAK_WARNING",
+              "INFO"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer"
+              },
+              "column": {
+                "type": "integer"
+              }
+            }
+          },
+          "element": {
+            "type": "string"
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer"
+                },
+                "column": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "fixes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "action",
+                "title"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "args": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

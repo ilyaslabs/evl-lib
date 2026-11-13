@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ilyaslabs.github.io/evl-lib/schema/1.0/evl-index.schema.json",
+  "title": "EVL processor index (META-INF/evl/index.json)",
+  "description": "Generated from the evl-core spec tables. Do not edit by hand; run ./gradlew generateSpec.",
+  "type": "object",
+  "required": [
+    "evl",
+    "format",
+    "annotations"
+  ],
+  "properties": {
+    "evl": {
+      "type": "string"
+    },
+    "format": {
+      "const": 1
+    },
+    "generator": {
+      "type": "string"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "annotation",
+          "element",
+          "elementKind"
+        ],
+        "properties": {
+          "annotation": {
+            "type": "string",
+            "description": "Annotation name inside EVL, e.g. Component."
+          },
+          "element": {
+            "type": "string",
+            "description": "Annotated declaration as a source reference."
+          },
+          "elementKind": {
+            "type": "string",
+            "enum": [
+              "PACKAGE",
+              "TYPE",
+              "METHOD",
+              "FIELD",
+              "CONSTRUCTOR",
+              "PARAMETER"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer"
+          },
+          "column": {
+            "type": "integer"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Explicitly set attributes (strings, booleans, string arrays)."
+          }
+        }
+      }
+    }
+  }
+}

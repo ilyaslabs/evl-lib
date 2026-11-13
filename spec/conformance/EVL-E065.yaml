@@ -1,0 +1,29 @@
+# Conformance cases for EVL-E065. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E065
+cases:
+  - name: "call a component"
+    expect: present
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C }
+      flow.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: s, name: S, type: CALL_FLOW, flow: c }
+  - name: "call a flow"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        flows:
+          - { id: g, name: G, category: TECHNICAL }
+      flow.evl.yaml: |
+        flows:
+          - id: f
+            name: F
+            category: APPLICATION
+            steps:
+              - { id: s, name: S, type: CALL_FLOW, flow: g }

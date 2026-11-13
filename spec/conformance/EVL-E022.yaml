@@ -1,0 +1,20 @@
+# Conformance cases for EVL-E022. 'present' cases must report the rule; 'absent' cases must not.
+rule: EVL-E022
+cases:
+  - name: "library not on classpath"
+    expect: present
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C, module: "payments-sdk:payments" }
+  - name: "library on classpath"
+    expect: absent
+    files:
+      a.evl.yaml: |
+        components:
+          - { id: c, name: C, module: "payments-sdk:payments" }
+    libraries:
+      "payments-sdk":
+        a.evl.yaml: |
+          modules:
+            - { id: payments, name: P }
