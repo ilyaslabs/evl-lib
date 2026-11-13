@@ -9,7 +9,7 @@ dependencies {
     implementation("info.picocli:picocli:4.7.7")
     implementation("com.github.javaparser:javaparser-core:3.27.0")
     implementation("org.ow2.asm:asm:9.8")
-    implementation("org.snakeyaml:snakeyaml-engine:2.10")
+    implementation("org.snakeyaml:snakeyaml-engine:3.2")
     testImplementation(project(":evl-processor"))
     testImplementation(project(":evl-annotations"))
 }

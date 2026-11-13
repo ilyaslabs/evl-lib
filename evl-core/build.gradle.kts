@@ -5,8 +5,8 @@ plugins {
 description = "EVL core: canonical model, YAML and index parsing, resolution, validation and graph queries."
 
 dependencies {
-    implementation("org.snakeyaml:snakeyaml-engine:2.10")
-    testImplementation("org.snakeyaml:snakeyaml-engine:2.10")
+    implementation("org.snakeyaml:snakeyaml-engine:3.2")
+    testImplementation("org.snakeyaml:snakeyaml-engine:3.2")
     testImplementation("com.networknt:json-schema-validator:1.5.8")
     testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2")
 }
