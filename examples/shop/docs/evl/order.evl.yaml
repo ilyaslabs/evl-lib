@@ -1,0 +1,63 @@
+evl: "1.0"
+
+actors:
+  - { id: actor.customer, name: Customer, actorType: HUMAN }
+
+requirements:
+  - id: req.checkout-under-2s
+    name: Checkout under 2 seconds
+    kind: NON_FUNCTIONAL
+    statement: "95% of order placements complete within 2 seconds."
+    priority: MUST
+
+decisions:
+  - id: adr.saga-over-2pc
+    name: Saga instead of two-phase commit
+    status: ACCEPTED
+    context: "Payments and inventory are separate services."
+    decision: "Use a saga with compensations."
+    consequences: "Stock must be released when payment fails."
+    date: "2026-11-13"
+
+errors:
+  - { id: order.out-of-stock, name: Out of stock, code: "409", condition: "A line cannot be reserved", retryable: false }
+
+flows:
+  - id: order.placement
+    actors: [actor.customer]
+    decisions: [adr.saga-over-2pc]
+    preconditions: ["Cart is not empty"]
+    postconditions: ["Order is PLACED or rejected with a reason"]
+    inputs: [{ name: request, type: order.create-request }]
+    outputs: [{ name: order, type: order.order }]
+    steps:
+      - id: validate
+        type: ACTION
+        name: Validate Order
+      - id: reserve
+        type: CALL_FLOW
+        name: Reserve Inventory
+        flow: inventory.reserve
+      - id: stock-ok
+        type: DECISION
+        name: Stock available?
+        branches:
+          - when: reserved
+            steps:
+              - { id: authorize, type: CALL_FLOW, name: Authorize Payment, flow: "payments-sdk:payment.authorize" }
+          - when: out of stock
+            steps:
+              - { id: reject, type: FAIL, name: Reject Order, error: order.out-of-stock }
+      - id: confirm
+        type: ACTION
+        name: Confirm Order
+        realizedBy: [order.service]
+        errors:
+          - on: payment declined
+            then:
+              - { id: release, type: CALL_FLOW, name: Release Stock, flow: inventory.release }
+      - id: publish
+        type: EVENT
+        name: Publish Order Placed
+        event: order.placed
+        direction: PUBLISH

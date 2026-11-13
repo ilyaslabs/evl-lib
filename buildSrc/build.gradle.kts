@@ -9,4 +9,5 @@ repositories {
 
 dependencies {
     implementation("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.20")
 }

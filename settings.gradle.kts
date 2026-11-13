@@ -4,4 +4,6 @@ rootProject.name = "evl-lib"
 include(
     "evl-annotations",
     "evl-core",
+    "evl-processor",
+    "evl-processor-ksp",
 )

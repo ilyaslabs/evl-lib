@@ -1,0 +1,11 @@
+flows:
+  - id: payment.authorize
+    steps:
+      - { id: check, type: ACTION, name: Check Fraud Score }
+      - id: call
+        type: RETRY
+        name: Call PSP
+        policy: { maxAttempts: 3, backoff: exponential }
+        steps:
+          - { id: request, type: ACTION, name: Send Authorization }
+      - { id: capture, type: CALL_FLOW, name: Capture Later, flow: payment.capture, async: true }
