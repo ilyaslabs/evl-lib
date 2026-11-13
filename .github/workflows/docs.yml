@@ -26,6 +26,9 @@ jobs:
           mkdir -p site/javadoc
           cp -r docs spec examples README.md CHANGELOG.md site/
           sed -e "s#(\.\./#(#g" -e "s#(\([a-z-]*\.md\))#(docs/\1)#g" docs/index.md > site/index.md
+          # Example projects are source trees with no page to render: link them to GitHub instead.
+          sed -i "s#(\.\./examples/#(https://github.com/ilyaslabs/evl-lib/tree/main/examples/#g" site/docs/*.md
+          sed -i "s#(examples/#(https://github.com/ilyaslabs/evl-lib/tree/main/examples/#g" site/README.md
           cp -r evl-annotations/build/docs/javadoc site/javadoc/annotations
           cp -r evl-core/build/docs/javadoc site/javadoc/core
       - uses: actions/configure-pages@v6
