@@ -3,6 +3,10 @@ updates:
   - package-ecosystem: gradle
     directory: "/"
     schedule: { interval: weekly }
+    ignore:
+      # snakeyaml-engine 3.x is a major API change for the YAML parser; upgrade deliberately.
+      - dependency-name: "org.snakeyaml:snakeyaml-engine"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule: { interval: weekly }

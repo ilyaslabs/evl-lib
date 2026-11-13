@@ -7,7 +7,7 @@ description = "EVL command-line tool: validate, inspect, list, graph, index and 
 dependencies {
     api(project(":evl-core"))
     implementation("info.picocli:picocli:4.7.7")
-    implementation("com.github.javaparser:javaparser-core:3.27.0")
+    implementation("com.github.javaparser:javaparser-core:3.28.2")
     implementation("org.ow2.asm:asm:9.8")
     implementation("org.snakeyaml:snakeyaml-engine:2.10")
     testImplementation(project(":evl-processor"))
@@ -23,7 +23,7 @@ tasks.processResources {
 }
 
 // Runnable fat jar: evl-cli-<version>-all.jar (attached to GitHub releases).
-val allJar by tasks.registering(Jar::class) {
+val allJar = tasks.register<Jar>("allJar") {
     group = "build"
     description = "Assembles the runnable evl CLI jar with all dependencies."
     archiveClassifier.set("all")
