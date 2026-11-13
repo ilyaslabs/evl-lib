@@ -3,4 +3,5 @@ rootProject.name = "evl-lib"
 
 include(
     "evl-annotations",
+    "evl-core",
 )
