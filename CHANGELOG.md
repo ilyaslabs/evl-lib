@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (unreleased)
+## 1.0.0 (2026-11-13)
 
 - Specification 1.0: language, annotations, documents, workflows, evidence, compatibility, agent interface; JSON Schemas and `rules.yaml` generated from `evl-core`; conformance suite with one file per rule.
 - `evl-annotations`, `evl-processor` (Java), `evl-processor-ksp` (Kotlin).
