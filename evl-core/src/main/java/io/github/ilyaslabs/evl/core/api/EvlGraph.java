@@ -121,14 +121,15 @@ public final class EvlGraph {
 
     /** The key of the application element. */
     public String applicationKey() {
-        return appId;
+        return "application:" + appId;
     }
 
     /** Looks an element up by reference text ({@code flow:order.placement}, {@code lib:id}, ...). */
     public Optional<Element> resolve(String reference) {
         return ElementRef.parse(reference).flatMap(r -> {
-            String key = r.app() == null || r.app().equals(appId)
-                ? (r.local() == null ? r.id() : r.id() + "/" + r.local()) : r.key();
+            String id = r.kind() == Kind.APPLICATION ? "application:" + r.id() : r.id();
+            String local = r.local() == null ? id : id + "/" + r.local();
+            String key = r.app() == null || r.app().equals(appId) ? local : r.app() + ":" + local;
             Element e = elements.get(key);
             if (e == null || (r.kind() != null && r.kind() != e.kind())) {
                 return Optional.empty();

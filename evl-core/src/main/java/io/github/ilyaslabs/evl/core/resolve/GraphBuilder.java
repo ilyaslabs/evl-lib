@@ -426,7 +426,8 @@ public final class GraphBuilder {
             }
             return null;
         }
-        String base = refApp == null ? r.id() : refApp + ":" + r.id();
+        String rid = r.kind() == Kind.APPLICATION ? Merger.APPLICATION_PREFIX + r.id() : r.id();
+        String base = refApp == null ? rid : refApp + ":" + rid;
         Draft target = drafts.get(r.local() == null ? base : base + "/" + r.local());
         if (target == null && r.local() != null) {
             Draft owner = drafts.get(base);
@@ -577,7 +578,7 @@ public final class GraphBuilder {
                 continue;
             }
             String a = d.app == null ? "" : d.app;
-            String root = d.app == null ? appId() : Merger.key(d.app, true, d.app);
+            String root = d.app == null ? Merger.applicationKey(appId(), false) : Merger.applicationKey(d.app, true);
             String parent = null;
             if (d.kind == Kind.CONFIG_PROPERTY && d.text("key") != null) {
                 for (Draft c : configsByApp.getOrDefault(a, List.of())) {

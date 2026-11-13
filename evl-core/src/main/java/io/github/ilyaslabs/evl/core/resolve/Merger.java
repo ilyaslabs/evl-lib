@@ -39,17 +39,18 @@ final class Merger {
         Map<String, List<RawDecl>> annById = new LinkedHashMap<>();
         List<RawDecl> dependencies = new ArrayList<>();
         Map<String, List<RawDecl>> order = new LinkedHashMap<>();
+        String appSlot = APPLICATION_PREFIX + appId; // the application has its own namespace (a module may share its id)
         if (manifest != null) {
-            docById.computeIfAbsent(appId, k -> new ArrayList<>()).add(manifest);
-            order.put(appId, null);
+            docById.computeIfAbsent(appSlot, k -> new ArrayList<>()).add(manifest);
+            order.put(appSlot, null);
         }
         for (RawDecl d : anns) {
             if (d.kind() == Kind.DEPENDENCY) {
                 dependencies.add(d);
                 continue;
             }
-            String id = d.kind() == Kind.APPLICATION ? appId : d.id();
-            if (!validId(id, d, libraries, false, diags)) {
+            String id = d.kind() == Kind.APPLICATION ? appSlot : d.id();
+            if (d.kind() != Kind.APPLICATION && !validId(id, d, libraries, false, diags)) {
                 continue;
             }
             annById.computeIfAbsent(id, k -> new ArrayList<>()).add(d);
@@ -68,9 +69,10 @@ final class Merger {
         }
 
         Map<String, Draft> out = new LinkedHashMap<>();
-        for (String id : order.keySet()) {
-            List<RawDecl> a = annById.getOrDefault(id, List.of());
-            List<RawDecl> y = docById.getOrDefault(id, List.of());
+        for (String slot : order.keySet()) {
+            List<RawDecl> a = annById.getOrDefault(slot, List.of());
+            List<RawDecl> y = docById.getOrDefault(slot, List.of());
+            String id = slot.equals(appSlot) ? appId : slot;
             RawDecl a0 = duplicates(id, a, diags);
             RawDecl y0 = duplicates(id, y, diags);
             if (a0 != null && y0 != null && a0.kind() != y0.kind()) {
@@ -80,7 +82,7 @@ final class Merger {
                 a0 = null;
             }
             Kind kind = (y0 != null ? y0 : a0).kind();
-            Draft d = new Draft(kind, id, key(appId, library, id), library ? appId : null);
+            Draft d = new Draft(kind, id, key(appId, library, slot), library ? appId : null);
             if (a0 != null) {
                 apply(d, a0);
                 d.derivedId = a0.derivedId();
@@ -106,6 +108,13 @@ final class Merger {
             out.put(d.key, d);
         }
         return out;
+    }
+
+    /** Key prefix of application elements: {@code application:shop}. */
+    static final String APPLICATION_PREFIX = "application:";
+
+    static String applicationKey(String appId, boolean library) {
+        return key(appId, library, APPLICATION_PREFIX + appId);
     }
 
     static String key(String appId, boolean library, String id) {

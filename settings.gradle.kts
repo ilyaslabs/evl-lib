@@ -6,4 +6,5 @@ include(
     "evl-core",
     "evl-processor",
     "evl-processor-ksp",
+    "evl-cli",
 )
