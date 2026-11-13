@@ -102,6 +102,18 @@ class CliTest {
     }
 
     @Test
+    void packageCommandBuildsALibrary(@TempDir Path out) {
+        Run p = evl("package", EXAMPLES.resolve("payments-sdk").toString(), "--out", out.toString(),
+            "--artifact", "com.example:payments-sdk:1.2.0");
+        assertThat(p.code()).as(p.out() + p.err()).isZero();
+        assertThat(out.resolve("META-INF/evl/index.json")).exists();
+        Run r = evl("validate", EXAMPLES.resolve("shop").toString(), "--classpath", out.toString(), "--min-level", "warning");
+        assertThat(r.code()).as(r.out() + r.err()).isZero();
+        assertThat(evl("package", EXAMPLES.resolve("shop").resolve("src").toString(), "--out", out.toString()).code())
+            .isEqualTo(Main.FAILURE);
+    }
+
+    @Test
     void missingLibraryIsAnError() {
         Run r = evl("validate", EXAMPLES.resolve("shop").toString());
         assertThat(r.code()).isEqualTo(Main.ERRORS);

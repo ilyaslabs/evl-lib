@@ -42,7 +42,7 @@ import picocli.CommandLine.Spec;
 @Command(name = "evl", mixinStandardHelpOptions = true, versionProvider = Main.Version.class,
     description = "EVL: validate and explore architecture and workflow documentation.",
     subcommands = {Main.Validate.class, Main.Inspect.class, Main.ListCmd.class, Main.Graph.class, Main.Index.class,
-        Main.Fmt.class, Main.Init.class, Main.Schema.class, Main.Compat.class, Main.Rules.class})
+        Main.Fmt.class, Main.Package.class, Main.Init.class, Main.Schema.class, Main.Compat.class, Main.Rules.class})
 public final class Main implements Callable<Integer> {
 
     public static final int OK = 0;
@@ -384,6 +384,42 @@ public final class Main implements Callable<Integer> {
                 }
                 Files.writeString(outFile, json);
             }
+            return OK;
+        }
+    }
+
+    // ------------------------------------------------------------------ package
+
+    @Command(name = "package", description = "Write the EVL library layout (META-INF/evl) of a LIBRARY application to a directory.")
+    static final class Package implements Callable<Integer> {
+        @Spec
+        CommandSpec spec;
+        @Parameters(index = "0", arity = "0..1", defaultValue = ".", description = "Project directory (contains evl.yaml).")
+        Path dir;
+        @Option(names = "--out", required = true, description = "Output root; files go to <out>/META-INF/evl/.")
+        Path out;
+        @Option(names = "--artifact", description = "Maven coordinates group:name:version recorded in the manifest.")
+        String artifact;
+
+        @Override
+        public Integer call() throws IOException {
+            Path root = dir.toAbsolutePath().normalize();
+            java.util.List<Path> written = LibraryPackager.write(root, out, artifact);
+            if (written.isEmpty()) {
+                spec.commandLine().getErr().println("evl: no valid evl.yaml in " + root);
+                return FAILURE;
+            }
+            io.github.ilyaslabs.evl.core.parse.Manifest m = io.github.ilyaslabs.evl.core.parse.ManifestParser
+                .parse("evl.yaml", Files.readString(root.resolve("evl.yaml"))).manifest().orElseThrow();
+            java.util.List<Path> sourceRoots = new java.util.ArrayList<>();
+            for (String s : m.sources().isEmpty() ? java.util.List.of("src/main/java") : m.sources()) {
+                sourceRoots.add(root.resolve(s));
+            }
+            java.util.List<io.github.ilyaslabs.evl.core.parse.AnnotationRecord> records = new java.util.ArrayList<>();
+            new io.github.ilyaslabs.evl.cli.scan.JavaSourceScanner(root).scan(sourceRoots).values().forEach(records::addAll);
+            Path index = out.resolve(io.github.ilyaslabs.evl.core.parse.Library.ROOT + "index.json");
+            Files.writeString(index, io.github.ilyaslabs.evl.core.parse.IndexFile.write(records, "evl-cli"));
+            spec.commandLine().getOut().println("Wrote " + (written.size() + 1) + " file(s) to " + out.resolve("META-INF/evl"));
             return OK;
         }
     }
