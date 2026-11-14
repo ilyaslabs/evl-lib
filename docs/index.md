@@ -31,7 +31,7 @@ String key = "media/" + asset.userId() + "/" + asset.id();
 - Steps are numbered in call order: EVL follows the calls from the parent's code to each child.
 - `@Flow(value = "image-upload>thumbnail", after = "image-upload>queue")` marks an asynchronous step that follows another one (dashed arrow).
 - Branches, loops and error paths are written, never inferred: a path segment ending in `?` is a decision (`checkout>payment?>card`), its arms carry `when = "card"` (or `[when card]` on an inline marker, `[when else]` for the rest); `each = "size in sizes"` / `[each …]` marks a loop; `onError = "IOException"` / `[on error …]` marks an error path.
-- Code shared by several flows carries all their paths: `@Flow({"a>x", "b>x"})`, or `// @flow a>x, b>x: Label` inline. A flow that calls code tagged only for another flow still shows the resources that code uses.
+- Code shared by several flows is tagged in every flow where it is a meaningful step (not where it only builds a response): `@Flow({"a>x", "b>x"})`, or `// @flow a>x, b>x: Label` inline. A flow that calls code tagged only for another flow still shows the resources that code uses.
 - `label = "…"` sets the display name and `description = "…"` the line under it.
 
 ## 3. Pick symbols
@@ -54,6 +54,6 @@ Put resource symbols on the class (or the interface it implements). Classes with
 ## 4. See it
 
 - **IntelliJ plugin:** Tools > EVL > Open EVL Map. Click a box to preview its code (10 lines around the tag), click again or press ⊕ to open its path level, and use Go to source to jump to the line.
-- **CLI:** `java -jar evl-cli-all.jar <dir>` prints the tree; `--json` prints the model the plugin draws.
+- **CLI:** `java -jar evl-cli-all.jar <dir>` prints the tree, including `when …:`, `on error …:` and `(each …)` lines; `--json` prints the model the plugin draws.
 
 See [examples/media](../examples/media) for a complete example.
