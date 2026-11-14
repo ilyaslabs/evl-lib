@@ -209,6 +209,10 @@ public final class Scanner {
         n.kind = kind;
         n.name = label.isEmpty() ? n.segment() : label;
         n.subtitle = t.description.isEmpty() ? subtitleFor(sym, t.classSymbolPath()) : t.description;
+        if (sym != null && "endpoint".equals(kind)) {
+            String full = join(t.classSymbolPath(), sym.str("path", ""));
+            if (!full.isEmpty()) n.attrs.put("path", full);
+        }
         if (sym != null && "endpoint".equals(kind)) n.caller = sym.str("caller", "");
     }
 

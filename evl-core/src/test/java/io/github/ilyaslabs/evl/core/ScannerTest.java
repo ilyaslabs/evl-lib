@@ -80,6 +80,7 @@ class ScannerTest {
         assertThat(checkout.name).isEqualTo("Place order");
         assertThat(checkout.subtitle).isEqualTo("POST /orders");
         assertThat(checkout.caller).isEqualTo("Web shop");
+        assertThat(checkout.attrs).containsEntry("path", "/orders");
         assertThat(children(checkout)).containsExactly("save", "notify");
         assertThat(find(m, "checkout>notify").name).isEqualTo("Send receipt");
         assertThat(find(m, "checkout>save").uses).containsExactly("database:orders-db");
