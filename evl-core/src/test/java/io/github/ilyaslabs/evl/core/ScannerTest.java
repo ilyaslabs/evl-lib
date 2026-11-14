@@ -82,6 +82,46 @@ class ScannerTest {
     }
 
     @Test
+    void sharedCodeInTwoFlows() {
+        String src = """
+                import io.github.ilyaslabs.evl.EVL;
+                import io.github.ilyaslabs.evl.Flow;
+
+                class Api {
+                    private final Urls urls;
+                    @Flow("view")
+                    String view() { return urls.build(); }
+                    @Flow("asset")
+                    String asset() { return urls.build(); }
+                    @Flow("thumb")
+                    String thumb() { return urls.sign(); }
+                }
+
+                class Urls {
+                    private final Bucket bucket;
+                    String build() {
+                        // @flow view>url?>public, asset>url?>public: Public URL [when public]
+                        return bucket.publicUrl();
+                    }
+                    @Flow("other>sign")
+                    String sign() { return bucket.presign(); }
+                }
+
+                @EVL.Storage("S3")
+                class Bucket { String publicUrl() { return ""; } String presign() { return ""; } }
+                """;
+        FlowModel m = Scanner.scan(List.of(new SourceFile("Api.java", src)));
+        assertThat(m.problems).isEmpty();
+        for (String flow : List.of("view", "asset")) {
+            FlowNode arm = find(m, flow + ">url?>public");
+            assertThat(arm.attrs).containsEntry("when", "public");
+            assertThat(arm.uses).contains("storage:S3");
+        }
+        // Code anchored in another flow still counts as this flow's resource use.
+        assertThat(find(m, "thumb").uses).contains("storage:S3");
+    }
+
+    @Test
     void kotlinSources() {
         String api = """
                 package shop

@@ -43,7 +43,7 @@ public final class Scanner {
     private static final Pattern METHOD_REF = Pattern.compile("\\b([A-Za-z_]\\w*)\\s*::\\s*([a-z_]\\w*)");
     private static final Pattern KT_FUN = Pattern.compile("\\bfun\\s+(?:<[^>]*>\\s*)?(?:[\\w.]+\\.)?([A-Za-z_]\\w*)\\s*\\(");
     private static final Pattern ANNOTATION = Pattern.compile("@\\s*([A-Za-z_][\\w.]*)");
-    private static final Pattern MARKER = Pattern.compile("^//+\\s*@flow\\s+([^\\s:]+)\\s*:?\\s*(.*?)\\s*$");
+    private static final Pattern MARKER = Pattern.compile("^//+\\s*@flow\\s+([^\\s:,]+(?:\\s*,\\s*[^\\s:,]+)*)\\s*:?\\s*(.*?)\\s*$");
     private static final Pattern JAVA_VAR = Pattern.compile("\\b([A-Z]\\w*)(?:\\s*<[^;={}()]*>)?(?:\\s*\\[\\s*])?\\s+([a-z_]\\w*)\\s*[;=,)]");
     private static final Pattern KT_VAR = Pattern.compile("\\b([a-z_]\\w*)\\s*:\\s*([A-Z]\\w*)");
     private static final Pattern NEW_VAR = Pattern.compile("\\b([a-z_]\\w*)\\s*=\\s*(?:new\\s+)?([A-Z]\\w*)\\s*[(<]");
@@ -287,11 +287,11 @@ public final class Scanner {
         for (int[] r : ranges(t)) {
             for (Call c : t.file.calls(r[0], r[1])) {
                 List<MethodDecl> targets = resolve(owner, c);
-                if (targets.stream().anyMatch(anchoredAt::containsKey)) continue;
+                if (anchoredIn(targets, root(n.path))) continue;
                 if (c.receiver != null) addTypeResources(uses, typeOf(owner, ctx, c.receiver));
                 for (MethodDecl m : targets) {
                     if (m.owner != null && m.owner != owner) addResource(uses, m.owner);
-                    uses.addAll(deepUses(m, new HashSet<>(), 0));
+                    uses.addAll(deepUses(m, root(n.path), new HashSet<>(), 0));
                 }
             }
             for (String type : t.file.typeUses(r[0], r[1])) addTypeResources(uses, type);
@@ -301,16 +301,27 @@ public final class Scanner {
         return uses;
     }
 
-    private Set<String> deepUses(MethodDecl m, Set<MethodDecl> seen, int depth) {
+    private static String root(String path) {
+        int i = path.indexOf('>');
+        return i < 0 ? path : path.substring(0, i);
+    }
+
+    /** True if a target carries a step of the same flow: that step draws its own resources. */
+    private boolean anchoredIn(List<MethodDecl> targets, String root) {
+        for (MethodDecl m : targets) for (FlowNode a : anchoredAt.getOrDefault(m, List.of())) if (root(a.path).equals(root)) return true;
+        return false;
+    }
+
+    private Set<String> deepUses(MethodDecl m, String root, Set<MethodDecl> seen, int depth) {
         Set<String> uses = new LinkedHashSet<>();
         if (depth > 4 || !seen.add(m) || m.bodyStart < 0) return uses;
         for (Call c : m.file.calls(m.bodyStart, m.bodyEnd)) {
             List<MethodDecl> targets = resolve(m.owner, c);
-            if (targets.stream().anyMatch(anchoredAt::containsKey)) continue;
+            if (anchoredIn(targets, root)) continue;
             if (c.receiver != null) addTypeResources(uses, typeOf(m.owner, m, c.receiver));
             for (MethodDecl t : targets) {
                 if (t.owner != null && t.owner != m.owner) addResource(uses, t.owner);
-                uses.addAll(deepUses(t, seen, depth + 1));
+                uses.addAll(deepUses(t, root, seen, depth + 1));
             }
         }
         for (String type : m.file.typeUses(m.bodyStart, m.bodyEnd)) addTypeResources(uses, type);
@@ -961,10 +972,12 @@ public final class Scanner {
                 String comment = text.substring(cm[0], cm[1]);
                 Matcher m = MARKER.matcher(comment);
                 if (!m.find()) continue;
+                // One marker may name several paths: the same code shared by more than one flow.
+                for (String one : m.group(1).split("\\s*,\\s*")) {
                 Tag t = new Tag();
                 t.file = this;
                 t.marker = true;
-                t.path = m.group(1);
+                t.path = one;
                 String label = m.group(2);
                 Matcher b = BRACKET.matcher(label);
                 while (b.find()) {
@@ -983,6 +996,7 @@ public final class Scanner {
                 }
                 markers.add(t);
                 out.add(t);
+                }
             }
             markers.sort(Comparator.comparingInt(t -> t.off));
             return out;

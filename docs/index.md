@@ -31,6 +31,7 @@ String key = "media/" + asset.userId() + "/" + asset.id();
 - Steps are numbered in call order: EVL follows the calls from the parent's code to each child.
 - `@Flow(value = "image-upload>thumbnail", after = "image-upload>queue")` marks an asynchronous step that follows another one (dashed arrow).
 - Branches, loops and error paths are written, never inferred: a path segment ending in `?` is a decision (`checkout>payment?>card`), its arms carry `when = "card"` (or `[when card]` on an inline marker, `[when else]` for the rest); `each = "size in sizes"` / `[each …]` marks a loop; `onError = "IOException"` / `[on error …]` marks an error path.
+- Code shared by several flows carries all their paths: `@Flow({"a>x", "b>x"})`, or `// @flow a>x, b>x: Label` inline. A flow that calls code tagged only for another flow still shows the resources that code uses.
 - `label = "…"` sets the display name and `description = "…"` the line under it.
 
 ## 3. Pick symbols
