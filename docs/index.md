@@ -2,6 +2,8 @@
 
 EVL draws your system as hand-drawn flow maps, straight from tags in the code. There is no YAML.
 
+> **New to EVL?** Read the [developer guide](guide/index.md): twelve short chapters from your first tag to advanced patterns, with screenshots. This page is the one-page summary.
+
 ## 1. Add the annotations
 
 ```kotlin

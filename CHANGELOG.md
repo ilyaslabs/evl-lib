@@ -8,6 +8,7 @@
 - Explicit branches: `x?` path segments are decisions; `when`, `each` and `onError` (or `[when …]`, `[each …]`, `[on error …]` on markers) label arms, loops and error paths. Nothing is inferred from code.
 - One marker can carry several paths (`// @flow a>x, b>x`) for code shared by flows.
 - CLI prints `when`, `each` and `on error`; error-path steps take no step number.
+- New developer guide in `docs/guide`, from the first tag to advanced patterns, with screenshots.
 - Removed: `.evl.yaml` documents, the annotation processors, and the Gradle and Maven plugins.
 
 ## 1.0.0
