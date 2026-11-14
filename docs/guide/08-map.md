@@ -53,6 +53,16 @@ The toolbar's **SVG**, **PNG** and **Mermaid** buttons save exactly what you see
 
 In the IDE, a save dialog asks where to put the file.
 
+## Free and Pro
+
+The plugin is free to use with up to **10 flows**: the live map, expand in place, code peek, search, the tool window tree and gutter icons. **EVL Pro** (Help > Register, with a free trial) adds:
+
+- every flow, however large the project;
+- export to SVG, PNG and Mermaid;
+- presentation mode (**Present**: only the map, larger, with the tool windows hidden; `Esc` to leave).
+
+On the free plan a note above the map says how many flows are hidden, and Pro buttons carry a small PRO mark. The annotations, the CLI and the AI skills are open source and free.
+
 ## Problems
 
 If a tag has a problem (a bad path, a path tagged twice, an `after` that points nowhere), a **Problems** card appears on the right with the file and line. Chapter 11 lists every message.
