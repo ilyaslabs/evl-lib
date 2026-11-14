@@ -41,8 +41,6 @@ dependencies {
 
 Use the BOM (`io.github.ilyaslabs:evl-bom`) if you want one version for every EVL artifact.
 
-> **Pre-release builds.** Until 2.0.0 is on Maven Central, test builds are published as snapshots to `https://central.sonatype.com/repository/maven-snapshots/`. Add that repository and use the snapshot version you were given.
-
 Then import the two types:
 
 ```java
