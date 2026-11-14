@@ -454,7 +454,7 @@ public final class Scanner {
         Comparator<FlowNode> byKey = Comparator.comparingDouble(c -> key.getOrDefault(c, Double.MAX_VALUE));
         p.children.sort(byKey.thenComparing(c -> c.code == null ? "~" : c.code.file()).thenComparingInt(c -> c.code == null ? 0 : c.code.line()));
         int seq = 0;
-        for (FlowNode c : p.children) c.seq = c.async ? 0 : ++seq;
+        for (FlowNode c : p.children) c.seq = c.async || c.attrs.containsKey("onError") ? 0 : ++seq;
     }
 
     // ---------------------------------------------------------------- parsing

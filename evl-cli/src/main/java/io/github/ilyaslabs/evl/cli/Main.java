@@ -86,13 +86,16 @@ public final class Main {
 
     private static void node(StringBuilder b, FlowNode n, int depth) {
         b.append("  ".repeat(depth));
-        if (n.seq > 0) b.append(n.seq).append(". ");
+        if (n.attrs.containsKey("onError")) b.append("on error ").append(n.attrs.get("onError")).append(": ");
+        else if (n.attrs.containsKey("when")) b.append("when ").append(n.attrs.get("when")).append(": ");
         else if (n.async) b.append("~ ");
+        else if (n.seq > 0) b.append(n.seq).append(". ");
         b.append(n.segment());
         if (!n.name.equals(n.segment())) b.append(" \"").append(n.name).append('"');
         b.append(" [").append(n.kind).append(']');
         if (!n.subtitle.isEmpty()) b.append(' ').append(n.subtitle);
         if (!n.after.isEmpty()) b.append(" (after ").append(n.after).append(')');
+        if (n.attrs.containsKey("each")) b.append(" (each ").append(n.attrs.get("each")).append(')');
         if (!n.uses.isEmpty()) b.append(" uses ").append(String.join(", ", n.uses));
         if (n.code != null) b.append("  ").append(n.code.file()).append(':').append(n.code.line());
         b.append('\n');
