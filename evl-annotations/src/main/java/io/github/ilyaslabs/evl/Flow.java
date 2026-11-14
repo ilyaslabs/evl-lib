@@ -32,6 +32,15 @@ public @interface Flow {
     /** One line shown under the name. */
     String description() default "";
 
+    /** Condition for this step, drawn on its arrow, e.g. {@code "quota exceeded"}. Under a decision path ({@code checkout>payment?>card}) it labels the arm; {@code "else"} for the rest. */
+    String when() default "";
+
+    /** Loop this step runs in, drawn as a badge, e.g. {@code "size in sizes"}. */
+    String each() default "";
+
+    /** Error this step handles, drawn as a red dashed arrow, e.g. {@code "IOException"}. */
+    String onError() default "";
+
     /** Holder for repeated {@code @Flow} annotations. */
     @Documented
     @Retention(RetentionPolicy.CLASS)

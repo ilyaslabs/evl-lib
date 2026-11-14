@@ -40,6 +40,48 @@ class ScannerTest {
     }
 
     @Test
+    void decisionsLoopsAndErrors() {
+        String src = """
+                import io.github.ilyaslabs.evl.Flow;
+
+                class Checkout {
+                    @Flow("checkout")
+                    void pay(Order o) {
+                        // @flow checkout>resize: Resize [each size in sizes]
+                        resize(o);
+                        if (o.card()) {
+                            // @flow checkout>payment?>card: Charge card [when card]
+                            charge(o);
+                        } else if (o.wallet()) {
+                            // @flow checkout>payment?>wallet [when wallet]
+                            debit(o);
+                        } else {
+                            // @flow checkout>payment?>cod: Cash [when else]
+                            cod(o);
+                        }
+                        notifier.send(o);
+                    }
+                }
+
+                class Notifier {
+                    @Flow(value = "checkout>retry", onError = "IOException")
+                    void send(Order o) {}
+                }
+                """;
+        FlowModel m = Scanner.scan(List.of(new SourceFile("Checkout.java", src)));
+        assertThat(m.problems).isEmpty();
+        assertThat(children(find(m, "checkout"))).containsExactly("resize", "payment?", "retry");
+        FlowNode decision = find(m, "checkout>payment?");
+        assertThat(decision.kind).isEqualTo("decision");
+        assertThat(children(decision)).containsExactly("card", "wallet", "cod");
+        assertThat(find(m, "checkout>payment?>card").name).isEqualTo("Charge card");
+        assertThat(find(m, "checkout>payment?>card").attrs).containsEntry("when", "card");
+        assertThat(find(m, "checkout>payment?>wallet").name).isEqualTo("wallet");
+        assertThat(find(m, "checkout>resize").attrs).containsEntry("each", "size in sizes");
+        assertThat(find(m, "checkout>retry").attrs).containsEntry("onError", "IOException");
+    }
+
+    @Test
     void kotlinSources() {
         String api = """
                 package shop

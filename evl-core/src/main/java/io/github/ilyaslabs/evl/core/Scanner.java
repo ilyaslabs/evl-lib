@@ -35,7 +35,9 @@ public final class Scanner {
             "this", "try", "else", "when", "throw", "assert", "case", "do", "in", "is", "as", "fun", "val", "var", "object", "class",
             "interface", "sizeof", "typeof", "yield", "default", "finally", "until", "step", "downTo");
     private static final Set<String> SKIP_DIRS = Set.of("build", "out", "target", "node_modules", ".git", ".gradle", ".idea", "bin", "dist");
-    private static final Pattern PATH = Pattern.compile("[A-Za-z0-9_.\\-]+(>[A-Za-z0-9_.\\-]+)*");
+    private static final Pattern PATH = Pattern.compile("[A-Za-z0-9_.\\-]+(>[A-Za-z0-9_.\\-]+\\??)*");
+    /** {@code [when x]}, {@code [each x]} and {@code [on error x]} at the end of an inline marker. */
+    private static final Pattern BRACKET = Pattern.compile("\\[\\s*(when|each|on\\s*error)\\s+([^\\]]*?)\\s*\\]");
     private static final Pattern CLASS = Pattern.compile("(?<![\\w.@$])(class|interface|enum|record|object)\\s+([A-Za-z_]\\w*)");
     private static final Pattern CALL = Pattern.compile("\\b([A-Za-z_]\\w*)\\s*\\(");
     private static final Pattern METHOD_REF = Pattern.compile("\\b([A-Za-z_]\\w*)\\s*::\\s*([a-z_]\\w*)");
@@ -135,6 +137,12 @@ public final class Scanner {
                 model.problems.add(new Problem("warning", "after = \"" + n.after + "\" does not match any flow path", t.file.path, t.line));
             }
         }
+        for (FlowNode n : nodes.values()) {
+            if (n.segment().endsWith("?")) {
+                n.kind = "decision";
+                if (n.virtual()) n.name = n.segment();
+            }
+        }
         for (FlowNode n : nodes.values()) order(n);
         model.flows.sort(Comparator.comparing(n -> n.path));
         model.resources.addAll(resources.values());
@@ -182,6 +190,9 @@ public final class Scanner {
         n.after = t.after;
         n.async = !t.after.isEmpty();
         n.code = Code.of(t.file.path, t.file.lines, t.line);
+        if (!t.when.isEmpty()) n.attrs.put("when", t.when);
+        if (!t.each.isEmpty()) n.attrs.put("each", t.each);
+        if (!t.onError.isEmpty()) n.attrs.put("onError", t.onError);
         if (t.marker) {
             n.kind = "step";
             n.name = label.isEmpty() ? n.segment() : label;
@@ -383,6 +394,24 @@ public final class Scanner {
         return firstAt;
     }
 
+    /** Where `c` (or, for an untagged node such as a decision, its first tagged descendant) is reached from the parent. */
+    private Double keyOf(FlowNode c, Tag pt, Map<MethodDecl, Integer> reached) {
+        Tag ct = tagOf.get(c);
+        if (ct == null) {
+            Double best = null;
+            for (FlowNode d : c.children) {
+                Double k = keyOf(d, pt, reached);
+                if (k != null && (best == null || k < best)) best = k;
+            }
+            return best;
+        }
+        if (ct.marker && pt.method != null && ct.method == pt.method) return (double) ct.off;
+        if (ct.method != null && reached.containsKey(ct.method)) return (double) reached.get(ct.method);
+        Double best = null;
+        if (ct.cls != null) for (MethodDecl m : ct.cls.methods) if (reached.containsKey(m)) best = best == null ? reached.get(m) : Math.min(best, reached.get(m));
+        return best;
+    }
+
     private void order(FlowNode p) {
         if (p.children.isEmpty()) return;
         Tag pt = tagOf.get(p);
@@ -399,14 +428,9 @@ public final class Scanner {
                 reach(m, s, e).forEach(reached::putIfAbsent);
             }
             for (FlowNode c : p.children) {
-                Tag ct = tagOf.get(c);
-                if (ct == null || !c.after.isEmpty()) continue;
-                boolean sameMethod = ct.marker && pt.method != null && ct.method == pt.method;
-                if (sameMethod) key.put(c, (double) ct.off);
-                else if (ct.method != null && reached.containsKey(ct.method)) key.put(c, (double) reached.get(ct.method));
-                else if (ct.cls != null) {
-                    for (MethodDecl m : ct.cls.methods) if (reached.containsKey(m)) key.merge(c, (double) reached.get(m), Math::min);
-                }
+                if (!c.after.isEmpty()) continue;
+                Double k = keyOf(c, pt, reached);
+                if (k != null) key.put(c, k);
             }
         }
         // Asynchronous steps follow their `after` sibling.
@@ -497,6 +521,9 @@ public final class Scanner {
         String label = "";
         String after = "";
         String description = "";
+        String when = "";
+        String each = "";
+        String onError = "";
         int off;
         int line;
         boolean marker;
@@ -850,8 +877,9 @@ public final class Scanner {
                 int eq = topLevelEq(m);
                 String key = "value";
                 int vs = part[0];
-                if (eq >= 0 && m.substring(0, eq).trim().matches("[A-Za-z_]\\w*")) {
-                    key = m.substring(0, eq).trim();
+                String name = eq < 0 ? "" : m.substring(0, eq).trim().replace("`", "");
+                if (name.matches("[A-Za-z_]\\w*")) {
+                    key = name;
                     vs = part[0] + eq + 1;
                 }
                 a.args.put(key, values(vs, part[1]));
@@ -937,7 +965,15 @@ public final class Scanner {
                 t.file = this;
                 t.marker = true;
                 t.path = m.group(1);
-                t.label = m.group(2);
+                String label = m.group(2);
+                Matcher b = BRACKET.matcher(label);
+                while (b.find()) {
+                    String key = b.group(1).toLowerCase(Locale.ROOT);
+                    if (key.equals("when")) t.when = b.group(2);
+                    else if (key.equals("each")) t.each = b.group(2);
+                    else t.onError = b.group(2);
+                }
+                t.label = BRACKET.matcher(label).replaceAll("").trim();
                 t.off = cm[0];
                 t.line = line(cm[0]);
                 t.method = methodAt(cm[0]);
@@ -961,6 +997,9 @@ public final class Scanner {
                 t.label = a.str("label", "");
                 t.after = a.str("after", "");
                 t.description = a.str("description", "");
+                t.when = a.str("when", "");
+                t.each = a.str("each", "");
+                t.onError = a.str("onError", "");
                 t.off = a.off;
                 t.line = line(a.off);
                 t.method = d;
