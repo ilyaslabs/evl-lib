@@ -1,7 +1,0 @@
-evl: "1.0"
-id: payments-sdk
-name: Payments SDK
-kind: LIBRARY
-description: Reusable payment client; ships its EVL data inside the jar.
-documents:
-  - "docs/evl/**/*.evl.yaml"

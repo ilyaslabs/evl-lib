@@ -2,16 +2,10 @@ plugins {
     id("evl.published-library")
 }
 
-description = "EVL command-line tool: validate, inspect, list, graph, index and format EVL documentation."
+description = "EVL command-line tool: prints the flow tree of a project, or its JSON model."
 
 dependencies {
     api(project(":evl-core"))
-    implementation("info.picocli:picocli:4.7.7")
-    implementation("com.github.javaparser:javaparser-core:3.28.2")
-    implementation("org.ow2.asm:asm:9.8")
-    implementation("org.snakeyaml:snakeyaml-engine:2.10")
-    testImplementation(project(":evl-processor"))
-    testImplementation(project(":evl-annotations"))
 }
 
 tasks.processResources {
@@ -22,7 +16,7 @@ tasks.processResources {
     }
 }
 
-// Runnable fat jar: evl-cli-<version>-all.jar (attached to GitHub releases).
+// Runnable jar: evl-cli-<version>-all.jar.
 val allJar = tasks.register<Jar>("allJar") {
     group = "build"
     description = "Assembles the runnable evl CLI jar with all dependencies."
@@ -33,9 +27,7 @@ val allJar = tasks.register<Jar>("allJar") {
     }
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
-    from({ configurations.runtimeClasspath.get().filter { it.name.endsWith(".jar") }.map { zipTree(it) } }) {
-        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "META-INF/versions/*/module-info.class", "module-info.class")
-    }
+    from({ configurations.runtimeClasspath.get().filter { it.name.endsWith(".jar") }.map { zipTree(it) } })
 }
 
 tasks.assemble { dependsOn(allJar) }

@@ -7,7 +7,7 @@ repositories {
 }
 
 // Each module sets its own bytecode level through the `evl.javaRelease` extra property
-// (8 for annotations and the processor, 17 for core and tools). The build itself runs on
+// (8 for annotations, 17 for core and the CLI). The build itself runs on
 // any JDK >= 21; CI uses JDK 25 via ilyaslabs/cicd.
 val javaRelease: Int = (findProperty("evl.javaRelease") as String?)?.toInt() ?: 17
 
