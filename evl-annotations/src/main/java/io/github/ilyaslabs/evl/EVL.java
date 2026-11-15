@@ -56,13 +56,22 @@ public final class EVL {
         String description() default "";
     }
 
-    /** A queue, topic or event stream: pipe. */
+    /** A queue, topic or event stream: pipe. Repeat it when one listener reads several topics. */
     @Documented
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.METHOD})
+    @java.lang.annotation.Repeatable(Queues.class)
     public @interface Queue {
         String value() default "";
         String description() default "";
+    }
+
+    /** Container for repeated {@link Queue} annotations; write {@code @EVL.Queue} several times instead. */
+    @Documented
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    public @interface Queues {
+        Queue[] value();
     }
 
     /** A cache: lightning bolt. */

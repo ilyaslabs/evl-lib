@@ -173,4 +173,45 @@ class ScannerTest {
         FlowModel m = Scanner.scan(List.of(new SourceFile("A.java", "class A { @Flow(\"a>>b\") void f() {} }")));
         assertThat(m.problems).extracting(Problem::level).containsExactly("error");
     }
+
+    @Test
+    void agentFeedbackFixes() {
+        String api = """
+                import io.github.ilyaslabs.evl.EVL;
+                import io.github.ilyaslabs.evl.Flow;
+
+                class Api {
+                    @Inject OrderService svc;
+                    @Flow("order")
+                    void place() { svc.reserve(); }
+                }
+                """;
+        String a = """
+                import io.github.ilyaslabs.evl.Flow;
+                class OrderService {
+                    @Inject Zeta zeta;
+                    @Inject Alpha alpha;
+                    void reserve() { var z = zeta; z.first(); alpha.second(); }
+                }
+                class Alpha { @Flow("order>second") void second() {} }
+                class Zeta { @Flow("order>first") void first() {} }
+                """;
+        String b = """
+                import io.github.ilyaslabs.evl.EVL;
+                import io.github.ilyaslabs.evl.Flow;
+                class Listener {
+                    @EVL.Queue("orders")
+                    @EVL.Queue("refunds")
+                    @Flow("order>listen, refund>listen")
+                    void on() {
+                        // @flow : nothing here
+                    }
+                }
+                """;
+        FlowModel m = Scanner.scan(List.of(new SourceFile("Api.java", api), new SourceFile("A.java", a), new SourceFile("B.java", b)));
+        assertThat(children(find(m, "order"))).startsWith("first", "second");
+        assertThat(find(m, "refund>listen")).isNotNull();
+        assertThat(find(m, "order>listen").uses).contains("queue:refunds");
+        assertThat(m.problems).anyMatch(pr -> pr.message().contains("no path"));
+    }
 }
