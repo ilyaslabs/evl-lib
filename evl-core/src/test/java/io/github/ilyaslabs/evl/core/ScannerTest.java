@@ -214,4 +214,21 @@ class ScannerTest {
         assertThat(find(m, "order>listen").uses).contains("queue:refunds");
         assertThat(m.problems).anyMatch(pr -> pr.message().contains("no path"));
     }
+
+    @Test
+    void unknownReceiverNeverAddsResources() {
+        String src = """
+                import io.github.ilyaslabs.evl.EVL;
+                import io.github.ilyaslabs.evl.Flow;
+                class Media {
+                    @Flow("upload")
+                    void complete() { var x = load(); x.purge(); }
+                    Object load() { return null; }
+                }
+                @EVL.Database("cart")
+                class CartStore { void purge() {} }
+                """;
+        FlowModel m = Scanner.scan(List.of(new SourceFile("Media.java", src)));
+        assertThat(find(m, "upload").uses).doesNotContain("database:cart");
+    }
 }

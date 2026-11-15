@@ -375,7 +375,7 @@ public final class Scanner {
             return top.size() == 1 ? top : List.of();
         }
         String type = typeOf(owner, c.method, c.receiver);
-        if (type == null) return byName(c);
+        if (type == null) return out;
         for (ClassDecl k : classesByName.getOrDefault(type, List.of())) {
             for (ClassDecl x : withSupers(k)) for (MethodDecl m : x.methods) if (m.name.equals(c.name)) out.add(m);
         }
@@ -386,7 +386,13 @@ public final class Scanner {
                 for (MethodDecl m : k.methods) if (m.name.equals(c.name)) out.add(m);
             }
         }
-        return out.isEmpty() ? byName(c) : out;
+        return out;
+    }
+
+    /** For step order only: also follows calls whose receiver type is unknown, by a rare method name. Never used for resources. */
+    private List<MethodDecl> resolveLoose(ClassDecl owner, Call c) {
+        List<MethodDecl> out = resolve(owner, c);
+        return out.isEmpty() && c.receiver != null && !c.receiver.equals("this") && !c.receiver.equals("super") ? byName(c) : out;
     }
 
     /** Receiver type unknown or not in the project (var, injected, generated): use a method name that is rare in the project. */
@@ -417,7 +423,7 @@ public final class Scanner {
         for (Call c : from.file.calls(start, end)) {
             int[] rank = {0};
             Set<MethodDecl> seen = new HashSet<>();
-            for (MethodDecl m : resolve(from.owner, c)) walk(m, c.off, rank, seen, firstAt, 0);
+            for (MethodDecl m : resolveLoose(from.owner, c)) walk(m, c.off, rank, seen, firstAt, 0);
         }
         return firstAt;
     }
@@ -426,7 +432,7 @@ public final class Scanner {
         if (depth > 40 || seen.size() > 400 || !seen.add(m)) return;
         firstAt.putIfAbsent(m, base + (rank[0]++) / 10000.0);
         if (m.bodyStart < 0) return;
-        for (Call cc : m.file.calls(m.bodyStart, m.bodyEnd)) for (MethodDecl n : resolve(m.owner, cc)) walk(n, base, rank, seen, firstAt, depth + 1);
+        for (Call cc : m.file.calls(m.bodyStart, m.bodyEnd)) for (MethodDecl n : resolveLoose(m.owner, cc)) walk(n, base, rank, seen, firstAt, depth + 1);
     }
 
     /** Where `c` (or, for an untagged node such as a decision, its first tagged descendant) is reached from the parent. */
