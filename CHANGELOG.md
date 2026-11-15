@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Fix: the 2.0.1 by-name call fallback also linked resources, so a step could show databases of unrelated modules. It now only affects step order.
+
 ## 2.0.1
 
 - Step order across files follows the call order (depth-first), not file names; calls on receivers of unknown type (`var`, injected, generated) resolve by method name.
