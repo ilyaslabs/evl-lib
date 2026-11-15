@@ -10,7 +10,7 @@
 | `@EVL.Job(schedule, trigger, description)` | a scheduled or triggered job method | clock; the schedule or trigger shows under it |
 | `@EVL.Database(value, table, description)` | a repository or DAO class or interface | cylinder |
 | `@EVL.Storage(value, description)` | a file or object storage client | bucket |
-| `@EVL.Queue(value, description)` | a publisher or consumer of a topic or queue | pipe |
+| `@EVL.Queue(value, description)` | a publisher or consumer of a topic or queue (repeat it for several topics) | pipe |
 | `@EVL.Cache(value, ttl, description)` | a cache | lightning bolt |
 | `@EVL.External(value, description)` | a client for a third-party service | cloud |
 | `@EVL.Interface(value, description)` | a port or API boundary | box with a lollipop |

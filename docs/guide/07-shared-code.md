@@ -5,7 +5,7 @@
 Some code is a real step in more than one flow. Give it every path where it matters:
 
 ```java
-@Flow({"media-view>url?>public", "media-asset>url?>public"})
+@Flow("media-view>url?>public, media-asset>url?>public")
 String publicUrl(Asset a) { ... }
 ```
 

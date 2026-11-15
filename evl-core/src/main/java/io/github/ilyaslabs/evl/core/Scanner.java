@@ -163,6 +163,12 @@ public final class Scanner {
                 }
                 r.members.add(c.name);
                 resourceOfClass.put(c, r.id);
+                for (Ann x : c.anns) {
+                    if (x == a || !a.kind().equals(x.kind()) || x.str("value", "").isEmpty()) continue;
+                    Resource more = resources.computeIfAbsent(x.kind() + ":" + x.str("value", ""), k -> new Resource(x.kind(), x.str("value", "")));
+                    if (more.code == null) more.code = Code.of(f.path, f.lines, f.line(x.off));
+                    more.members.add(c.name);
+                }
             }
         }
         // Classes that implement or extend a resource type belong to it too.
@@ -210,6 +216,13 @@ public final class Scanner {
             if (r == null && sym != null) {
                 String name = sym.str("value", owner == null ? n.segment() : owner.name);
                 r = resources.computeIfAbsent(kind + ":" + name, k -> new Resource(kind, name)).id;
+            }
+            // Repeated symbols (one listener on several topics): the extra ones become uses.
+            List<Ann> all = t.method != null ? t.method.anns : t.cls != null ? t.cls.anns : List.of();
+            for (Ann x : all) {
+                if (x == sym || !kind.equals(x.kind())) continue;
+                String xn = x.str("value", "");
+                if (!xn.isEmpty()) n.uses.add(resources.computeIfAbsent(kind + ":" + xn, k -> new Resource(kind, xn)).id);
             }
             n.kind = kind;
             n.resource = r;
@@ -362,7 +375,7 @@ public final class Scanner {
             return top.size() == 1 ? top : List.of();
         }
         String type = typeOf(owner, c.method, c.receiver);
-        if (type == null) return out;
+        if (type == null) return byName(c);
         for (ClassDecl k : classesByName.getOrDefault(type, List.of())) {
             for (ClassDecl x : withSupers(k)) for (MethodDecl m : x.methods) if (m.name.equals(c.name)) out.add(m);
         }
@@ -373,7 +386,14 @@ public final class Scanner {
                 for (MethodDecl m : k.methods) if (m.name.equals(c.name)) out.add(m);
             }
         }
-        return out;
+        return out.isEmpty() ? byName(c) : out;
+    }
+
+    /** Receiver type unknown or not in the project (var, injected, generated): use a method name that is rare in the project. */
+    private List<MethodDecl> byName(Call c) {
+        List<MethodDecl> named = new ArrayList<>();
+        for (ParsedFile f : files) for (MethodDecl m : f.methods) if (m.name.equals(c.name) && m.owner != null) named.add(m);
+        return named.size() <= 3 ? named : List.of();
     }
 
     private List<ClassDecl> withSupers(ClassDecl c) {
@@ -388,25 +408,29 @@ public final class Scanner {
         return out;
     }
 
-    /** Methods reachable from {@code m} within a few calls. */
-    private Map<MethodDecl, Integer> reach(MethodDecl from, int start, int end) {
-        Map<MethodDecl, Integer> firstAt = new LinkedHashMap<>();
+    /**
+     * Methods reachable from {@code from}, keyed by where they are first reached: the offset of the
+     * top-level call plus a depth-first, call-order rank, so steps in other files keep call order.
+     */
+    private Map<MethodDecl, Double> reach(MethodDecl from, int start, int end) {
+        Map<MethodDecl, Double> firstAt = new LinkedHashMap<>();
         for (Call c : from.file.calls(start, end)) {
-            Deque<MethodDecl> todo = new ArrayDeque<>(resolve(from.owner, c));
+            int[] rank = {0};
             Set<MethodDecl> seen = new HashSet<>();
-            int depth = 0;
-            while (!todo.isEmpty() && depth++ < 200) {
-                MethodDecl m = todo.poll();
-                if (!seen.add(m) || seen.size() > 60) continue;
-                firstAt.putIfAbsent(m, c.off);
-                if (m.bodyStart >= 0) for (Call cc : m.file.calls(m.bodyStart, m.bodyEnd)) todo.addAll(resolve(m.owner, cc));
-            }
+            for (MethodDecl m : resolve(from.owner, c)) walk(m, c.off, rank, seen, firstAt, 0);
         }
         return firstAt;
     }
 
+    private void walk(MethodDecl m, int base, int[] rank, Set<MethodDecl> seen, Map<MethodDecl, Double> firstAt, int depth) {
+        if (depth > 40 || seen.size() > 400 || !seen.add(m)) return;
+        firstAt.putIfAbsent(m, base + (rank[0]++) / 10000.0);
+        if (m.bodyStart < 0) return;
+        for (Call cc : m.file.calls(m.bodyStart, m.bodyEnd)) for (MethodDecl n : resolve(m.owner, cc)) walk(n, base, rank, seen, firstAt, depth + 1);
+    }
+
     /** Where `c` (or, for an untagged node such as a decision, its first tagged descendant) is reached from the parent. */
-    private Double keyOf(FlowNode c, Tag pt, Map<MethodDecl, Integer> reached) {
+    private Double keyOf(FlowNode c, Tag pt, Map<MethodDecl, Double> reached) {
         Tag ct = tagOf.get(c);
         if (ct == null) {
             Double best = null;
@@ -417,7 +441,7 @@ public final class Scanner {
             return best;
         }
         if (ct.marker && pt.method != null && ct.method == pt.method) return (double) ct.off;
-        if (ct.method != null && reached.containsKey(ct.method)) return (double) reached.get(ct.method);
+        if (ct.method != null && reached.containsKey(ct.method)) return reached.get(ct.method);
         Double best = null;
         if (ct.cls != null) for (MethodDecl m : ct.cls.methods) if (reached.containsKey(m)) best = best == null ? reached.get(m) : Math.min(best, reached.get(m));
         return best;
@@ -428,7 +452,7 @@ public final class Scanner {
         Tag pt = tagOf.get(p);
         Map<FlowNode, Double> key = new HashMap<>();
         if (pt != null) {
-            Map<MethodDecl, Integer> reached = new HashMap<>();
+            Map<MethodDecl, Double> reached = new HashMap<>();
             List<MethodDecl> sources = new ArrayList<>();
             if (pt.method != null) sources.add(pt.method);
             else if (pt.cls != null) sources.addAll(pt.cls.methods);
@@ -966,12 +990,15 @@ public final class Scanner {
 
         List<Tag> tags(List<Problem> problems) {
             List<Tag> out = new ArrayList<>();
-            for (ClassDecl c : classes) for (Ann a : c.anns) if (a.name.equals("Flow")) out.addAll(flowTags(a, null, c));
-            for (MethodDecl d : methods) for (Ann a : d.anns) if (a.name.equals("Flow")) out.addAll(flowTags(a, d, null));
+            for (ClassDecl c : classes) for (Ann a : c.anns) if (a.name.equals("Flow")) out.addAll(flowTags(a, null, c, problems));
+            for (MethodDecl d : methods) for (Ann a : d.anns) if (a.name.equals("Flow")) out.addAll(flowTags(a, d, null, problems));
             for (int[] cm : comments) {
                 String comment = text.substring(cm[0], cm[1]);
                 Matcher m = MARKER.matcher(comment);
-                if (!m.find()) continue;
+                if (!m.find()) {
+                    if (comment.matches("(?s)^//+\\s*@flow\\b.*")) problems.add(new Problem("warning", "// @flow marker has no path: write // @flow a>b: Label", path, line(cm[0])));
+                    continue;
+                }
                 // One marker may name several paths: the same code shared by more than one flow.
                 for (String one : m.group(1).split("\\s*,\\s*")) {
                 Tag t = new Tag();
@@ -1002,9 +1029,15 @@ public final class Scanner {
             return out;
         }
 
-        private List<Tag> flowTags(Ann a, MethodDecl d, ClassDecl c) {
+        private List<Tag> flowTags(Ann a, MethodDecl d, ClassDecl c, List<Problem> problems) {
             List<Tag> out = new ArrayList<>();
-            for (String p : a.args.getOrDefault("value", List.of())) {
+            List<String> paths = new ArrayList<>();
+            for (String v : a.args.getOrDefault("value", List.of())) for (String one : v.split(",")) paths.add(one);
+            for (String p : paths) {
+                if (p.trim().isEmpty()) {
+                    problems.add(new Problem("warning", "@Flow has an empty path", path, line(a.off)));
+                    continue;
+                }
                 Tag t = new Tag();
                 t.file = this;
                 t.path = p.trim();

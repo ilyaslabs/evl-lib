@@ -1,6 +1,13 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.1
+
+- Step order across files follows the call order (depth-first), not file names; calls on receivers of unknown type (`var`, injected, generated) resolve by method name.
+- `@Flow("a>x, b>x")`: one string can name several paths (Java's `value` is a single String).
+- `@EVL.Queue` is repeatable, for a listener on several topics.
+- Warnings for `// @flow` markers and `@Flow` values with an empty path.
+
+## 2.0.0
 
 - New model: `@Flow("a>b>c")` paths on classes and methods, plus `// @flow a>b: Label` markers inside methods.
 - `@EVL.*` annotations only pick the symbol: Endpoint, Job, Database, Storage, Queue, Cache, External, Interface, Service, Actor.
