@@ -9,7 +9,7 @@ EVL 2.0 turns `@Flow("image-upload>s3")` tags in Java or Kotlin code into hand-d
 | `evl-cli` | `evl <dir>` prints the tree; `--json` prints the model. |
 | `evl-bom` | Aligns the versions. |
 
-Read the [developer guide](docs/guide/index.md) (from first tag to advanced, with screenshots), the [one-page summary](docs/index.md) and the [media example](examples/media). The IntelliJ plugin draws the maps.
+Read the [developer guide](docs/guide/index.md) (from first tag to advanced, with screenshots), the [one-page summary](docs/index.md) and the [media example](examples/media). To see the maps, install the [EVL IntelliJ plugin](https://plugins.jetbrains.com/plugin/36145) from JetBrains Marketplace.
 
 ## Snapshots
 

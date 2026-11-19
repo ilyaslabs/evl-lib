@@ -6,6 +6,14 @@ This guide teaches EVL from the first tag to the advanced patterns. Read it in o
 
 ![The EVL map of the media example](img/root.png)
 
+> **The maps are drawn by the EVL IntelliJ plugin.** The annotations and the CLI work on their own, but to see the hand-drawn flow maps you need the [EVL plugin from JetBrains Marketplace](https://plugins.jetbrains.com/plugin/36145) (IntelliJ IDEA 2026.3 or newer; free for up to 10 flows).
+
+<div id="evl-plugin-card-guide"></div>
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('card', 36145, "#evl-plugin-card-guide");
+</script>
+
 ## Chapters
 
 | # | Chapter | You will learn |

@@ -55,9 +55,21 @@ import io.github.ilyaslabs.evl.Flow
 
 ## Install the IntelliJ plugin
 
+The plugin is required to see the flow maps. Get it from [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/36145):
+
+<div id="evl-plugin-card-install"></div>
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('card', 36145, "#evl-plugin-card-install");
+</script>
+
+Or install it from the IDE:
+
 1. Open **Settings > Plugins**.
-2. Search the Marketplace for **EVL**, or use the gear menu > **Install Plugin from Disk...** with a `.zip` you were given.
+2. Search the Marketplace for **EVL** and click **Install**.
 3. Restart the IDE.
+
+The plugin is free for up to 10 flows. EVL Pro unlocks every flow, export and presentation mode.
 
 After the restart you get:
 
